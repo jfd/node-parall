@@ -6,7 +6,8 @@ const Buffer            = require("buffer").Buffer
 
 const PUB_URL           = "proc://cluster-pub-" + process.pid;
 
-var subscriber  = null
+var noOfWorkers = parseInt(process.argv[2])
+  , subscriber  = null
   , publisher   = null
   , resp        = null
   , worker      = null
@@ -49,6 +50,8 @@ worker.on("message", function(msg) {
     
     case "shutdown":
       equal(Object.keys(publisher._subscriptions).length, 0);
+      equal(publisher._remoteEndpoints.length, noOfWorkers - 1);
+      equal(subscriber._remoteEndpoints.length, noOfWorkers - 1);
       process.nextTick(function() {
         process.exit();
       });

@@ -16,7 +16,7 @@ clusterMaster = createChannel("master");
 clusterMaster.encoding = "json";
 clusterMaster.bind("proc://cluster-master");
 
-cluster = spawn("./cluster-worker.js", CLUSTER_POOL_SIZE);
+cluster = spawn("./cluster-worker.js", CLUSTER_POOL_SIZE, [CLUSTER_POOL_SIZE]);
 cluster.on("update", function() { 
   clusterMaster.initial = ["update", cluster.pids];
   clusterMaster.bcast("update", cluster.pids);
