@@ -11,6 +11,7 @@ var clusterMaster = null
     delegater = null
     pubsubMaster = null
     pubsubs = null
+    timer = null
 
 clusterMaster = createChannel("master");
 clusterMaster.encoding = "json";
@@ -27,6 +28,7 @@ cluster.on("workerStop", function(worker, code, signal, error) {
   }
 });
 cluster.on("stop", function() {
+  clearTimeout(timer);
   process.exit();
 });
 
@@ -50,3 +52,8 @@ pubsubs.on("workerStop", function(worker, code, signal, error) {
 pubsubs.on("stop", function() {
   clusterMaster.bcast("shutdown");
 });
+
+
+timer = setTimeout(function() {
+  throw new Error("Timeout reached");
+}, 5000);  
