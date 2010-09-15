@@ -1,0 +1,1 @@
+exports.TMP_PATH = "/var/tmp";
