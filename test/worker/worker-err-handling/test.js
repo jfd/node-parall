@@ -1,10 +1,15 @@
 const ok                = require("assert").ok
+    , equal             = require("assert").equal
     , notEqual          = require("assert").notEqual
     , spawn             = require("../../../lib").spawn
+    , timeout           = require("../../global").timeout
+    , shutdown          = require("../../global").shutdown
 
 var master  = null
-  , timer = null
+  , timer   = null
 
+
+timeout(5000);
 
 function testErrAfterTimeout() {
   var pool = null;
@@ -68,24 +73,51 @@ function testErrOnStartup3() {
   
   // This test should not leak exceptions
   process.on("uncaughtException", uncaughtException);
-console.log("er")
+
   pool = spawn("./err-on-startup.js", 1, function(error) {
     process.removeListener("uncaughtException", uncaughtException);
-    notEqual(error, undefined);    
+    notEqual(error, undefined);
+    process.nextTick(testErrAndRestart);
   });
 }
 
 function testErrAndRestart() {
+  var pool = null
+    , options = { restartOnError: true }
+    , fullSignals = 0
+    , spawnSignals = 0
+    , errorSignals = 0
+    , exitSignals = 0
+
+  function uncaughtException(err) {
+    process.removeListener("uncaughtException", uncaughtException);
+    throw new Error("Worker pool leaked exception.");
+  }
   
-}
+  // This test should not leak exceptions
+  process.on("uncaughtException", uncaughtException);
 
-function shutdown() {
-  clearTimeout(timer);
-  process.exit();
+  pool = spawn("./err-and-restart.js", 1, [process.pid], options);
+  pool.on("full", function() {
+    fullSignals++;
+  })
+  pool.on("spawn", function() {
+    spawnSignals++;
+  });
+  pool.on("workerError", function() {
+    errorSignals++;
+  });
+  pool.on("exit", function() {
+    exitSignals++;
+  });
+  pool.on("empty", function() {
+    process.removeListener("uncaughtException", uncaughtException);
+    equal(fullSignals, 1, "full signal");
+    equal(spawnSignals, 2, "spawn signal");
+    equal(errorSignals, 1, "error signal");
+    equal(exitSignals, 2, "exit signal");
+    shutdown();
+  })
 }
-
-timer = setTimeout(function() {
-  throw new Error("Timeout reached");
-}, 5000);
 
 testErrAfterTimeout();
