@@ -17,7 +17,7 @@ master.encoding = "json";
 master.bind("proc://worker-pool");
 
 pool = spawn("./worker.js", POOL_SIZE);
-pool.on("start", function() {
+pool.on("full", function() {
   setTimeout(function() {
     var reqcount = REQUESTS_TO_SEND;
     while (reqcount--) {
@@ -43,12 +43,12 @@ pool.on("start", function() {
     }
   }, 200);
 });
-pool.on("workerStop", function(worker, code, no, error) {
+pool.on("exit", function(worker, code, no, error) {
   if (code) {
     throw new Error(error);
   }
 });
-pool.on("stop", function() {
+pool.on("empty", function() {
   
   if (count != REQUESTS_TO_SEND) {
     throw new Error("Request count mismatch");

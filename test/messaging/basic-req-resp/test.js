@@ -29,13 +29,13 @@ resp.on("message", function(msg) {
 
 pool = spawn("./request.js", POOL_SIZE, [REQUESTS_TO_SEND]);
 
-pool.on("workerStop", function(worker, error) {
+pool.on("exit", function(worker, error) {
   if (error) {
     throw error;
   }
 });
 
-pool.on("stop", function() {
+pool.on("empty", function() {
   
   if (count != POOL_SIZE * REQUESTS_TO_SEND) {
     throw new Error("Message count mismatch");

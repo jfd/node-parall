@@ -29,13 +29,13 @@ function getbytes(pid) {
   return buffer;
 }
 
-function onpoolstart() {
+function onpoolfull() {
   if (++activepools == 2) {
     setTimeout(startseige, 100);
   }  
 }
 
-function onpoolstop() {
+function onpoolempty() {
   if (--activepools == 0) {
     process.nextTick(stopseige);
   }  
@@ -80,19 +80,19 @@ pub.on("unsubscribe", function(pattern) {
 });
 
 pool = spawn("./subscriber.js", POOL_SIZE, [BCASTS_TO_RECV]);
-pool.on("workerStart", function(worker) {
+pool.on("spawn", function(worker) {
   pids.push(getbytes(worker.pid));
 });
-pool.on("workerStop", function(worker, error) {
+pool.on("exit", function(worker, error) {
   if (error) {
     throw error;
   }
 });
-pool.on("start", onpoolstart);
-pool.on("stop", onpoolstop);
+pool.on("full", onpoolfull);
+pool.on("empty", onpoolempty);
 
 nullpool = spawn("./nullsubscriber.js", POOL_SIZE, 
                                         [BCASTS_TO_RECV * POOL_SIZE]);
 
-nullpool.on("start", onpoolstart);
-nullpool.on("stop", onpoolstop);
+nullpool.on("full", onpoolfull);
+nullpool.on("empty", onpoolempty);

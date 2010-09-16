@@ -36,13 +36,13 @@ function getlongestbufferlength() {
   return longest;
 }
 
-function onpoolstart() {
+function onpoolfull() {
   if (++activepools == 2) {
     setTimeout(startseige, 100);
   }  
 }
 
-function onpoolstop() {
+function onpoolempty() {
   if (--activepools == 0) {
     process.nextTick(stopseige);
   }  
@@ -89,22 +89,22 @@ pub.on("unsubscribe", function(pattern) {
 });
 
 pool = spawn("./unsubscriber.js", POOL_SIZE);
-pool.on("workerStart", function(worker) {
+pool.on("spawn", function(worker) {
   pids.push(getbytes(worker.pid));
 });
-pool.on("workerStop", function(worker, error) {
+pool.on("exit", function(worker, error) {
   if (error) {
     throw new Error(error);
   }
 });
-pool.on("start", onpoolstart);
-pool.on("stop", onpoolstop);
+pool.on("full", onpoolfull);
+pool.on("empty", onpoolempty);
 
 nullpool = spawn("./nullunsubscriber.js", POOL_SIZE);
-nullpool.on("workerStop", function(worker, error) {
+nullpool.on("exit", function(worker, error) {
   if (error) {
     throw new Error(error);
   }
 });
-nullpool.on("start", onpoolstart);
-nullpool.on("stop", onpoolstop);
+nullpool.on("full", onpoolfull);
+nullpool.on("empty", onpoolempty);

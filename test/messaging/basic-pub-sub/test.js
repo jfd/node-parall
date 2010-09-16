@@ -16,7 +16,7 @@ pub.bind("proc://pub-sub");
 
 pool = spawn("./worker.js", 2, [MESSAGES_TO_SEND, MESSAGE]);
 
-pool.on("start", function() {
+pool.on("full", function() {
   setTimeout(function() {
     var count = MESSAGES_TO_SEND;
     while (count--) {
@@ -25,13 +25,13 @@ pool.on("start", function() {
   }, 200);
 });
 
-pool.on("workerStop", function(worker, error) {
+pool.on("exit", function(worker, error) {
   if (error) {
     throw error;
   }
 });
 
-pool.on("stop", function() {
+pool.on("empty", function() {
   clearTimeout(timer);
   process.exit();
 });

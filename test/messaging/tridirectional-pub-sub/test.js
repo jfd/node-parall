@@ -18,16 +18,16 @@ clusterMaster.encoding = "json";
 clusterMaster.bind("proc://cluster-master");
 
 cluster = spawn("./cluster-worker.js", CLUSTER_POOL_SIZE, [CLUSTER_POOL_SIZE]);
-cluster.on("update", function() { 
+cluster.on("spawn", function() { 
   clusterMaster.initial = ["update", cluster.pids];
   clusterMaster.bcast("update", cluster.pids);
 });
-cluster.on("workerStop", function(worker, code, signal, error) { 
+cluster.on("exit", function(worker, code, signal, error) { 
   if (code) {
     throw new Error(error);
   }
 });
-cluster.on("stop", function() {
+cluster.on("empty", function() {
   clearTimeout(timer);
   process.exit();
 });
@@ -42,14 +42,14 @@ pubsubMaster.encoding = "json";
 pubsubMaster.bind("proc://pubsub-master");
 
 pubsubs = spawn("./pubsub-worker.js", PUBSUB_POOL_SIZE, [PUBSUB_POOL_SIZE]);
-pubsubs.on("start", function() {
+pubsubs.on("spawn", function() {
   pubsubMaster.initial = ["update", pubsubs.pids];
   pubsubMaster.bcast("update", pubsubs.pids);  
 });
-pubsubs.on("workerStop", function(worker, code, signal, error) { 
+pubsubs.on("exit", function(worker, code, signal, error) { 
   if (code) throw new Error(error);
 });
-pubsubs.on("stop", function() {
+pubsubs.on("empty", function() {
   clusterMaster.bcast("shutdown");
 });
 
