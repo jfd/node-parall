@@ -3,14 +3,17 @@ const ok                = require("assert").ok
     , createChannel     = require("../../../lib").createChannel
     , spawn             = require("../../../lib").spawn
     , replyTo           = require("../../../lib/messaging").replyTo
+    , timeout           = require("../../global").timeout
+    , shutdown          = require("../../global").shutdown
 
 const POOL_SIZE         = 2,
       REQUESTS_TO_SEND  = 10
 
 var resp  = null
   , pool  = null
-  , timer = null
   , count = 0
+  
+timeout(2000);
 
 resp = createChannel("resp");
 resp.encoding = "json";
@@ -41,10 +44,5 @@ pool.on("empty", function() {
     throw new Error("Message count mismatch");
   }
   
-  clearTimeout(timer);
-  process.exit();
+  shutdown();
 });
-
-timer = setTimeout(function() {
-  throw new Error("Timeout reached");
-}, 2000);

@@ -2,15 +2,18 @@ const ok                = require("assert").ok
     , equal             = require("assert").equal
     , createChannel     = require("../../../lib").createChannel
     , spawn             = require("../../../lib").spawn
+    , timeout           = require("../../global").timeout
+    , shutdown          = require("../../global").shutdown
 
 const POOL_SIZE         = 2,
       REQUESTS_TO_SEND  = 4000
 
 var master  = null
   , pool  = null
-  , timer = null
   , count = 0
   , tokens = []
+
+timeout(5000);
 
 master = createChannel("master");
 master.encoding = "json";
@@ -54,10 +57,5 @@ pool.on("empty", function() {
     throw new Error("Request count mismatch");
   }
   
-  clearTimeout(timer);
-  process.exit();
+  shutdown();
 });
-
-timer = setTimeout(function() {
-  throw new Error("Timeout reached");
-}, 5000);

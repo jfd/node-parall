@@ -2,6 +2,8 @@ const Buffer            = require("buffer").Buffer
     , equal             = require("assert").equal
     , createChannel     = require("../../../lib").createChannel
     , spawn             = require("../../../lib").spawn
+    , timeout           = require("../../global").timeout
+    , shutdown          = require("../../global").shutdown
 
 const POOL_SIZE         = 2,
       BCASTS_TO_RECV    = 10,
@@ -11,7 +13,6 @@ var pub   = null
   , pool  = null
   , nullpool = null
   , activepools = 0
-  , timer = null
   , count = 0
   , pids = []
   , subs = 0
@@ -61,9 +62,7 @@ function startseige() {
     setTimeout(loop, 50);
   })();
 
-  timer = setTimeout(function() {
-    throw new Error("Timeout reached");
-  }, 10000);  
+  timeout(10000);
 }
 
 function stopseige() {
@@ -72,9 +71,8 @@ function stopseige() {
                                              be empty");
   equal(pub._hasPatternLengthVariants, -1);
   equal(pub._broadcastEndpointFilterOptions.longestKey, 0);
-  
-  clearTimeout(timer);
-  process.exit();  
+
+  shutdown();
 }
 
 pub = createChannel("pub");

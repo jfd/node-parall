@@ -2,6 +2,8 @@ const Buffer            = require("buffer").Buffer
     , equal             = require("assert").equal
     , createChannel     = require("../../../lib").createChannel
     , spawn             = require("../../../lib").spawn
+    , timeout           = require("../../global").timeout
+    , shutdown          = require("../../global").shutdown
 
 const CLUSTER_POOL_SIZE = 3
     , PUBSUB_POOL_SIZE  = 8
@@ -11,7 +13,8 @@ var clusterMaster = null
     delegater = null
     pubsubMaster = null
     pubsubs = null
-    timer = null
+    
+timeout(5000);
 
 clusterMaster = createChannel("master");
 clusterMaster.encoding = "json";
@@ -27,10 +30,7 @@ cluster.on("exit", function(worker, code, signal, error) {
     throw new Error(error);
   }
 });
-cluster.on("empty", function() {
-  clearTimeout(timer);
-  process.exit();
-});
+cluster.on("empty", shutdown);
 
 delegater = createChannel("resp");
 delegater.encoding = "json";
@@ -52,8 +52,3 @@ pubsubs.on("exit", function(worker, code, signal, error) {
 pubsubs.on("empty", function() {
   clusterMaster.bcast("shutdown");
 });
-
-
-timer = setTimeout(function() {
-  throw new Error("Timeout reached");
-}, 5000);  

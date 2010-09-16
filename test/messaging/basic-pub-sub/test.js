@@ -2,13 +2,17 @@ const ok                = require("assert").ok
     , throws            = require("assert").throws
     , createChannel     = require("../../../lib").createChannel
     , spawn             = require("../../../lib").spawn
+    , timeout           = require("../../global").timeout
+    , shutdown          = require("../../global").shutdown
+    
 
 const MESSAGES_TO_SEND  = 1000,
       MESSAGE           = "Broadcast message"
 
 var pub = null
   , pool  = null
-  , timer = null
+  
+timeout(5000);
 
 pub = createChannel("pub");
 pub.encoding = "ascii";
@@ -31,11 +35,4 @@ pool.on("exit", function(worker, error) {
   }
 });
 
-pool.on("empty", function() {
-  clearTimeout(timer);
-  process.exit();
-});
-
-timer = setTimeout(function() {
-  throw new Error("Timeout reached");
-}, 2000);
+pool.on("empty", shutdown);
