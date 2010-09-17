@@ -14,7 +14,7 @@ sub.onmessage = function(msg) {
   if (message != msg.data) {
     throw new Error("Bad format");
   }
-  
+
   if (--messages == 0) {
     process.exit();
   }

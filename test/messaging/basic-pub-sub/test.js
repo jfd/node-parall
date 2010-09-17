@@ -7,27 +7,31 @@ const ok                = require("assert").ok
     
 
 const MESSAGES_TO_SEND  = 1000,
+      POOL_SIZE         = 2,
       MESSAGE           = "Broadcast message"
 
 var pub = null
   , pool  = null
+  , connections = 0;
   
 timeout(5000);
+
+function bcast() {
+  var count = MESSAGES_TO_SEND;
+  while (count--) {
+    pub.bcast(MESSAGE) 
+  }
+}
 
 pub = createChannel("pub");
 pub.encoding = "ascii";
 pub.bind("proc://pub-sub");
-
-pool = spawn("./worker.js", 2, [MESSAGES_TO_SEND, MESSAGE]);
-
-pool.on("full", function() {
-  setTimeout(function() {
-    var count = MESSAGES_TO_SEND;
-    while (count--) {
-      pub.bcast(MESSAGE) 
-    }
-  }, 200);
+pub.on("endpointConnect", function() {
+  // We need a timeout here. Child needs time to send the SUBSCRIBE message
+  (++connections == POOL_SIZE) && setTimeout(bcast, 200);
 });
+
+pool = spawn("./worker.js", POOL_SIZE, [MESSAGES_TO_SEND, MESSAGE]);
 
 pool.on("exit", function(worker, error) {
   if (error) {
