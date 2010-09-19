@@ -6,3 +6,6 @@ test-messaging:
   
 test-worker:
 	node tools/test.js -r test/worker
+	
+test-matching:
+	node tools/test.js -r test/matching
