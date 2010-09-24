@@ -23,5 +23,5 @@ function onrecv(ok) {
 }
 
 while (sent--) {
-  req.recv("hello world", onrecv);
+  req.send("hello world", onrecv);
 }

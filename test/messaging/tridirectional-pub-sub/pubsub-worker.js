@@ -64,7 +64,7 @@ publisher.on("endpointConnect", function() {
 
 req = createChannel("req");
 req.encoding = "json";
-req.recv("request", PUB_URL, function(ok, pid, remotePubUrl) {
+req.send("request", PUB_URL, function(ok, pid, remotePubUrl) {
   subscriber.connect(remotePubUrl);
 })
 

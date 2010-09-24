@@ -24,7 +24,7 @@ pool.on("full", function() {
   setTimeout(function() {
     var reqcount = REQUESTS_TO_SEND;
     while (reqcount--) {
-      master.recv("do", function(ok, token) {
+      master.send("do", function(ok, token) {
         if (ok !== "ok") throw new Error(ok);
         if (tokens.indexOf(token) !== -1) {
           throw new Error("Token already received");

@@ -26,7 +26,7 @@ resp.on("message", function(msg) {
 req = createChannel("req");
 req.encoding = "json";
 req.connect("mem://test");
-req.recv("ping", function(answer) {
+req.send("ping", function(answer) {
   equal(answer, "pong");
   shutdown();
 });

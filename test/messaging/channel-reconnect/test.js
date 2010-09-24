@@ -17,7 +17,7 @@ function procTest() {
   req = createChannel("req");
   req.encoding = "json";
   req.connect("proc://server");
-  req.recv("test", function(answer) {
+  req.send("test", function(answer) {
     equal(answer, "ok");
     process.nextTick(sockTest);
   });
@@ -32,7 +32,7 @@ function sockTest() {
   req = createChannel("req");
   req.encoding = "json";
   req.connect("sock://server");
-  req.recv("test", function(answer) {
+  req.send("test", function(answer) {
     equal(answer, "ok");
     process.nextTick(tcpTest);
   });
@@ -46,7 +46,7 @@ function tcpTest() {
   req = createChannel("req");
   req.encoding = "json";
   req.connect("tcp://" + TCP_HOST + ":" + TCP_PORT);
-  req.recv("test", function(answer) {
+  req.send("test", function(answer) {
     equal(answer, "ok");
     shutdown();
   });
