@@ -9,3 +9,6 @@ test-worker:
 	
 test-matching:
 	node tools/test.js -r test/matching
+	
+test-utils:
+	node tools/test.js -r test/utils
