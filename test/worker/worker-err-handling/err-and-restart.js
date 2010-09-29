@@ -2,7 +2,7 @@ const join            = require("path").join
     , stat            = require("fs").stat
     , writeFile       = require("fs").writeFile
 
-const TMP_PATH      = require("../../global").TMP_PATH
+const TMP_PATH      = require("../../common").TMP_PATH
 
 var parentpid = process.argv[2];
 var tmpfile = join(TMP_PATH, "parall-test-" + parentpid + ".tmp");

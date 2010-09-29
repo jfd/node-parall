@@ -2,11 +2,11 @@ const equal             = require("assert").equal
     , doesNotThrow      = require("assert").doesNotThrow
     , createChannel     = require("../../../lib").createChannel
     , spawn             = require("../../../lib").spawn
-    , timeout           = require("../../global").timeout
-    , shutdown          = require("../../global").shutdown
+    , timeout           = require("../../common").timeout
+    , shutdown          = require("../../common").shutdown
 
-const TCP_PORT          = require("../../global").TCP_PORT
-    , TCP_HOST          = require("../../global").TCP_HOST
+const TCP_PORT          = require("../../common").TCP_PORT
+    , TCP_HOST          = require("../../common").TCP_HOST
     
 timeout(5000);
 

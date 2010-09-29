@@ -2,8 +2,8 @@ const equal             = require("assert").equal
     , createChannel     = require("../../../lib").createChannel
     , replyTo           = require("../../../lib/messaging").replyTo
 
-const TCP_PORT          = require("../../global").TCP_PORT
-    , TCP_HOST          = require("../../global").TCP_HOST
+const TCP_PORT          = require("../../common").TCP_PORT
+    , TCP_HOST          = require("../../common").TCP_HOST
 
 var resp = null;
 

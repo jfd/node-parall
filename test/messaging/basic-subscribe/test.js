@@ -2,8 +2,8 @@ const Buffer            = require("buffer").Buffer
     , equal             = require("assert").equal
     , createChannel     = require("../../../lib").createChannel
     , spawn             = require("../../../lib").spawn
-    , timeout           = require("../../global").timeout
-    , shutdown          = require("../../global").shutdown
+    , timeout           = require("../../common").timeout
+    , shutdown          = require("../../common").shutdown
 
 const POOL_SIZE         = 2,
       BCASTS_TO_RECV    = 10,

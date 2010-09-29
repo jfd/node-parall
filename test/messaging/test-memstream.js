@@ -2,8 +2,8 @@ const equal               = require("assert").equal
     , ok                  = require("assert").ok
     , createChannel       = require("../../lib/messaging").createChannel
     , replyTo             = require("../../lib/messaging").replyTo
-    , timeout             = require("../global").timeout
-    , shutdown            = require("../global").shutdown
+    , timeout             = require("../common").timeout
+    , shutdown            = require("../common").shutdown
     
 const SUPPORTED_PROTOCOLS = require("../../lib/messaging").SUPPORTED_PROTOCOLS;
 

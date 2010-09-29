@@ -3,8 +3,8 @@ const ok                = require("assert").ok
     , createChannel     = require("../../../lib").createChannel
     , spawn             = require("../../../lib").spawn
     , replyTo           = require("../../../lib/messaging").replyTo
-    , timeout           = require("../../global").timeout
-    , shutdown          = require("../../global").shutdown
+    , timeout           = require("../../common").timeout
+    , shutdown          = require("../../common").shutdown
 
 const POOL_SIZE         = 2,
       REQUESTS_TO_SEND  = 10

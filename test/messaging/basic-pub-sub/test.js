@@ -2,8 +2,8 @@ const ok                = require("assert").ok
     , throws            = require("assert").throws
     , createChannel     = require("../../../lib").createChannel
     , spawn             = require("../../../lib").spawn
-    , timeout           = require("../../global").timeout
-    , shutdown          = require("../../global").shutdown
+    , timeout           = require("../../common").timeout
+    , shutdown          = require("../../common").shutdown
     
 
 const MESSAGES_TO_SEND  = 1000,

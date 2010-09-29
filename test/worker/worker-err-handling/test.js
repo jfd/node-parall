@@ -2,8 +2,8 @@ const ok                = require("assert").ok
     , equal             = require("assert").equal
     , notEqual          = require("assert").notEqual
     , spawn             = require("../../../lib").spawn
-    , timeout           = require("../../global").timeout
-    , shutdown          = require("../../global").shutdown
+    , timeout           = require("../../common").timeout
+    , shutdown          = require("../../common").shutdown
 
 var master  = null
   , timer   = null

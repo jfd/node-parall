@@ -3,9 +3,9 @@ const Buffer            = require("buffer").Buffer
     , equal             = require("assert").equal
     , createChannel     = require("../../../lib").createChannel
     , spawn             = require("../../../lib").spawn
-    , createPayload     = require("../../global").createPayload
-    , timeout           = require("../../global").timeout
-    , shutdown          = require("../../global").shutdown
+    , createPayload     = require("../../common").createPayload
+    , timeout           = require("../../common").timeout
+    , shutdown          = require("../../common").shutdown
 
 const POOL_SIZE         = 2,
       REQUESTS_TO_SEND  = 500,

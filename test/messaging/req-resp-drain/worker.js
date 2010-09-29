@@ -1,7 +1,7 @@
 const createChannel     = require("../../../lib").createChannel
     , replyTo           = require("../../../lib/messaging").replyTo
     , ok                = require("../../../lib/messaging").ok
-    , createPayload     = require("../../global").createPayload
+    , createPayload     = require("../../common").createPayload
 
 const MESSAGES_TO_RECV  = parseInt(process.argv[2])
 
