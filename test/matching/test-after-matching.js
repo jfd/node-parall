@@ -3,47 +3,40 @@ const ok                = require("assert").ok
     , deepEqual         = require("assert").deepEqual
     , match             = require("../../lib/matching").match
     , when              = require("../../lib/matching").when
-    
+    , after             = require("../../lib/matching").after
 
 var m = null
   , matched = null
   , matchResult = null
-  , calls;
+  , timeouted
 
 
 function result(no) {
   return function(ctx, callback) {
-    calls = 1;
     matchResult = this;
     matched = no;
     return this;
   }
 }
 
-function second() {
-  calls++;
+function timeouthandle() {
+  timeouted = true
   return this;
 }
     
 m = match(
   
-  when ("single-function") (
+  when ("test") (
     result(1)
   ),
   
-  when ("chained-functions") (
-    result(2),
-    second
-  ),
-  
-  when ("chained-w-arg", String) (
-    result(3),
-    second
-  )  
+  after (30) (
+    timeouthandle
+  )
 );
 
-ok(m("single-function")) || equal(matched, 1) || deepEqual(matchResult, []);
-ok(m("chained-functions")) || equal(matched, 2) || 
-  deepEqual(matchResult, []) || equal(calls, 2);
-ok(m("chained-w-arg", "test")) || equal(matched, 3) || 
-  deepEqual(matchResult, ["test"]) || equal(calls, 2);
+ok(!m("non-match"));
+
+setTimeout(function() {
+  ok(timeouted);
+}, 60);
