@@ -40,7 +40,6 @@ pool.on("full", function() {
           if (++count == REQUESTS_TO_SEND) {
             master.bcast("shutdown");
           }
-          console.log(count);
         });
       }
     }, 200);
