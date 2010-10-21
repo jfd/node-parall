@@ -1,6 +1,7 @@
 const ok                = require("assert").ok
     , throws            = require("assert").throws
     , createChannel     = require("../../../lib").createChannel
+    , send              = require("../../../lib").send
 
 var requests = parseInt(process.argv[2])
   , req = null
@@ -12,16 +13,14 @@ req.encoding = "json";
 
 req.connect("proc://req-resp");
 
-function onrecv(ok) {
-  if (ok !== "ok") {
-    throw new Error("Expected OK!");
-  }
-  
-  if (++count == requests) {
-    process.exit();
-  }
-}
-
 while (sent--) {
-  req.send("hello world", onrecv);
+  send(req, "hello world", function(state) {
+    if (state !== "ok") {
+      throw new Error("Expected OK!");
+    }
+
+    if (++count == requests) {
+      process.exit();
+    }
+  });
 }

@@ -2,7 +2,8 @@ const ok                = require("assert").ok
     , throws            = require("assert").throws
     , createChannel     = require("../../../lib").createChannel
     , spawn             = require("../../../lib").spawn
-    , replyTo           = require("../../../lib/messaging").replyTo
+    , send              = require("../../../lib").send
+    , decode            = require("../../../lib").decode
     , timeout           = require("../../common").timeout
     , shutdown          = require("../../common").shutdown
 
@@ -20,19 +21,20 @@ resp.encoding = "json";
 resp.bind("proc://req-resp");
 
 resp.on("message", function(msg) {
+  var graph = decode(msg, "json");
 
-  if (msg.data[0] !== "hello world") {
+  if (graph[0] !== "hello world") {
     throw new Error("Type mismatch");
   }
 
   count++;
   
-  replyTo(msg, "ok");
+  send.call(msg, "ok");
 });
 
 pool = spawn("./request.js", POOL_SIZE, [REQUESTS_TO_SEND]);
 
-pool.on("exit", function(worker, error) {
+pool.on("exit", function(worker, code, signal, error) {
   if (error) {
     throw error;
   }

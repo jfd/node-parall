@@ -57,7 +57,7 @@ function startseige() {
 
   (function loop() {
     pids.forEach(function(pid) {
-      pub.bcast(pid);
+      pub.send(new Buffer(pid.toString(), "ascii"));
     });
     setTimeout(loop, 50);
   })();

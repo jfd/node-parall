@@ -2,6 +2,7 @@ const equal             = require("assert").equal
     , doesNotThrow      = require("assert").doesNotThrow
     , createChannel     = require("../../../lib").createChannel
     , spawn             = require("../../../lib").spawn
+    , send              = require("../../../lib").send
     , timeout           = require("../../common").timeout
     , shutdown          = require("../../common").shutdown
 
@@ -17,7 +18,7 @@ function procTest() {
   req = createChannel("req");
   req.encoding = "json";
   req.connect("proc://server");
-  req.send("test", function(answer) {
+  send(req, "test", function(answer) {
     equal(answer, "ok");
     process.nextTick(sockTest);
   });
@@ -32,7 +33,7 @@ function sockTest() {
   req = createChannel("req");
   req.encoding = "json";
   req.connect("sock://server");
-  req.send("test", function(answer) {
+  send(req, "test", function(answer) {
     equal(answer, "ok");
     process.nextTick(tcpTest);
   });
@@ -46,7 +47,7 @@ function tcpTest() {
   req = createChannel("req");
   req.encoding = "json";
   req.connect("tcp://" + TCP_HOST + ":" + TCP_PORT);
-  req.send("test", function(answer) {
+  send(req, "test", function(answer) {
     equal(answer, "ok");
     shutdown();
   });

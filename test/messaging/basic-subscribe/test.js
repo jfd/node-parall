@@ -48,7 +48,7 @@ function startseige() {
   equal(pub._hasPatternLengthVariants, hasVariants);
   while (count--) {
     pids.forEach(function(pid) {
-      pub.bcast(pid);
+      pub.send(new Buffer(pid.toString(), "ascii"));
     });
   }
   

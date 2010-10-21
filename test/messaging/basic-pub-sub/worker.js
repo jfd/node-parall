@@ -10,12 +10,13 @@ sub = createChannel("sub");
 sub.encoding = "ascii";
 sub.subscribe("");
 sub.connect("proc://pub-sub");
-sub.onmessage = function(msg) {
-  if (message != msg.data) {
+sub.on("message", function(msg) {
+
+  if (message != msg) {
     throw new Error("Bad format");
   }
 
   if (--messages == 0) {
     process.exit();
   }
-}
+});

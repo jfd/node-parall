@@ -12,7 +12,7 @@ sub = createChannel("sub");
 sub.connect("proc://test-channel");
 sub.subscribe("");
 sub.on("message", function(msg) {
-  var graph = msg.data.toString("ascii");
+  var graph = msg.toString("ascii");
 
   if (++count == messages) {
     setTimeout(function() {

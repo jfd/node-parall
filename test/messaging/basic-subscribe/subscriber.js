@@ -13,11 +13,11 @@ sub = createChannel("sub");
 sub.connect("proc://test-channel");
 sub.subscribe(pattern);
 sub.on("message", function(msg) {
-  var graph = msg.data.toString("ascii");
+  var graph = msg.toString("ascii");
 
   if (graph.substr(0, pattern.length) !== pattern.toString("ascii")) {
     throw new Error("Received unexpected message " + 
-                    msg.data.toString("ascii", 0, pattern.length));
+                    msg.toString("ascii", 0, pattern.length));
   }
   
   if (++count == messages) {

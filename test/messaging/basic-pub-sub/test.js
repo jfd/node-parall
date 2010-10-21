@@ -2,6 +2,7 @@ const ok                = require("assert").ok
     , throws            = require("assert").throws
     , createChannel     = require("../../../lib").createChannel
     , spawn             = require("../../../lib").spawn
+    , send              = require("../../../lib").send
     , timeout           = require("../../common").timeout
     , shutdown          = require("../../common").shutdown
     
@@ -19,7 +20,7 @@ timeout(5000);
 function bcast() {
   var count = MESSAGES_TO_SEND;
   while (count--) {
-    pub.bcast(MESSAGE) 
+    send(pub, MESSAGE);
   }
 }
 
