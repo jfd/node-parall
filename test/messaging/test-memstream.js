@@ -1,7 +1,8 @@
 const equal               = require("assert").equal
     , ok                  = require("assert").ok
-    , createChannel       = require("../../lib/messaging").createChannel
-    , replyTo             = require("../../lib/messaging").replyTo
+    , createChannel       = require("../../lib").createChannel
+    , send                = require("../../lib").send
+    , decode              = require("../../lib").decode
     , timeout             = require("../common").timeout
     , shutdown            = require("../common").shutdown
     
@@ -19,14 +20,15 @@ resp = createChannel("resp");
 resp.encoding = "json";
 resp.bind("mem://test");
 resp.on("message", function(msg) {
-  equal(msg.data[0], "ping");
-  replyTo(msg, "pong");
+  var graph = decode(msg, this.encoding);
+  equal(graph[0], "ping");
+  send(msg, "pong");
 });
 
 req = createChannel("req");
 req.encoding = "json";
 req.connect("mem://test");
-req.send("ping", function(answer) {
+send(req, "ping", function(answer) {
   equal(answer, "pong");
   shutdown();
 });
