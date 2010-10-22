@@ -39,7 +39,7 @@ pool.on("empty", function(err, err1,err2) {
 for (var i = 0; i < REQUESTS_TO_SEND; i++) {
   master.send(graph, function() {
     if (++count == REQUESTS_TO_SEND) {
-      master.bcast(new Buffer("shutdown", "ascii"));
+      pool.kill();
     }
   });
 }
