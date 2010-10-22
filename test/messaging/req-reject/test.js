@@ -2,6 +2,7 @@ const ok                = require("assert").ok
     , equal             = require("assert").equal
     , createChannel     = require("../../../lib").createChannel
     , spawn             = require("../../../lib").spawn
+    , send              = require("../../../lib").send
     , timeout           = require("../../common").timeout
     , shutdown          = require("../../common").shutdown
 
@@ -26,7 +27,7 @@ pool.on("full", function() {
     var rejectRequestsToSend = POOL_SIZE / 2;
     
     while (rejectRequestsToSend--) {
-      master.send("set-reject", function(resp, pid) {
+      send(master, "set-reject", function(resp, pid) {
         rejectingPids.push(pid);
       });
     }
@@ -34,11 +35,11 @@ pool.on("full", function() {
     setTimeout(function() {
       var reqcount = REQUESTS_TO_SEND;
       while (reqcount--) {
-        master.send("ping", function(resp, pid) {
+        send(master, "ping", function(resp, pid) {
           equal(resp, "pong");
           equal(rejectingPids.indexOf(pid), -1);
           if (++count == REQUESTS_TO_SEND) {
-            master.bcast("shutdown");
+            pool.kill();
           }
         });
       }

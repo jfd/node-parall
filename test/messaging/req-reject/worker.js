@@ -1,6 +1,7 @@
 const createChannel     = require("../../../lib").createChannel
-    , replyTo           = require("../../../lib/messaging").replyTo
-    , reject            = require("../../../lib/messaging").reject
+    , send              = require("../../../lib/").send
+    , reject            = require("../../../lib/").reject
+    , decode            = require("../../../lib/").decode
 
 var worker = null
   , rejectMode = false;
@@ -8,17 +9,18 @@ var worker = null
 worker = createChannel("worker");
 worker.encoding = "json";
 worker.connect("proc://worker-pool");
-worker.onmessage = function(msg) {
-  if (msg.data[0] == "set-reject") {
+worker.on("message", function(msg) {
+  var graph = decode(msg, this.encoding);
+  if (graph[0] == "set-reject") {
     rejectMode = true;
-    replyTo(msg, "ok", process.pid);
-  } else if (msg.data[0] == "ping") {
+    send.call(msg, "ok", process.pid);
+  } else if (graph[0] == "ping") {
     if (rejectMode) {
-      reject(msg);
+      reject.call(msg);
     } else {
-      replyTo(msg, "pong", process.pid);
+      send.call(msg, "pong", process.pid);
     }
-  } else if (msg.data[0] == "shutdown") {
-    process.exit();
+  } else {
+    throw new Error("Bad message");
   }
-}
+});
