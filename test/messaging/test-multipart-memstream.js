@@ -3,7 +3,7 @@ const equal               = require("assert").equal
     , throws              = require("assert").throws
     , Buffer              = require("buffer").Buffer
     , createChannel       = require("../../lib").createChannel
-    , replyTo             = require("../../lib/messaging").replyTo
+    , replyTo             = require("../../lib").send
     , timeout             = require("../common").timeout
     , shutdown            = require("../common").shutdown
 
@@ -56,7 +56,7 @@ timeout(2000);
 resp = createChannel("resp");
 resp.bind("mem://test");
 resp.on("message", function(msg) {
-  replyTo(msg, msg.data);
+  msg.send(msg);
 });
 
 
