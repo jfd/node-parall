@@ -1,6 +1,6 @@
 const createChannel     = require("../../../lib").createChannel
-    , replyTo           = require("../../../lib/messaging").replyTo
-    , ok                = require("../../../lib/messaging").ok
+    , send              = require("../../../lib/").send
+    , decode            = require("../../../lib/").decode
 
 var worker = null
   , count = 0;
@@ -8,10 +8,11 @@ var worker = null
 worker = createChannel("worker");
 worker.encoding = "json";
 worker.connect("proc://worker-pool");
-worker.onmessage = function(msg) {
-  if (msg.data[0] == "do") {
-    replyTo(msg, "ok", process.pid.toString() + (count++));
-  } else if (msg.data[0] == "shutdown") {
-    process.exit();
+worker.on("message", function(msg) {
+  var graph = decode(msg, this.encoding);
+  if (graph[0] == "do") {
+    send.call(msg, "ok", process.pid.toString() + (count++));
+  } else {
+    throw new Error("Unexpected message");
   }
-}
+});

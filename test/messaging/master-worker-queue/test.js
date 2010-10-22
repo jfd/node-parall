@@ -2,11 +2,12 @@ const ok                = require("assert").ok
     , equal             = require("assert").equal
     , createChannel     = require("../../../lib").createChannel
     , spawn             = require("../../../lib").spawn
+    , send              = require("../../../lib").send
     , timeout           = require("../../common").timeout
     , shutdown          = require("../../common").shutdown
 
-const POOL_SIZE         = 2,
-      REQUESTS_TO_SEND  = 4000
+const POOL_SIZE         = 2
+    , REQUESTS_TO_SEND  = 2000
 
 var master  = null
   , pool  = null
@@ -24,7 +25,7 @@ pool.on("full", function() {
   setTimeout(function() {
     var reqcount = REQUESTS_TO_SEND;
     while (reqcount--) {
-      master.send("do", function(ok, token) {
+      send(master, "do", function(ok, token) {
         if (ok !== "ok") throw new Error(ok);
         if (tokens.indexOf(token) !== -1) {
           throw new Error("Token already received");
@@ -40,7 +41,7 @@ pool.on("full", function() {
                       undefined);
             });
           }
-          master.bcast("shutdown");
+          pool.kill();
         }
       });
     }
