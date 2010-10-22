@@ -6,7 +6,7 @@ const equal             = require("assert").equal
     , timeout           = require("../../common").timeout
     , shutdown          = require("../../common").shutdown
 
-const REQUESTS_TO_SEND  = 10,
+const REQUESTS_TO_SEND  = 20,
       MESSAGE_SIZE      = 1024 * 100
 
 var req  = null

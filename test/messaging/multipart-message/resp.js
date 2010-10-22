@@ -1,6 +1,6 @@
 const ok                = require("assert").ok
     , createChannel     = require("../../../lib").createChannel
-    , replyTo           = require("../../../lib/messaging").replyTo
+    , send              = require("../../../lib").send
 
 var requests = parseInt(process.argv[2])
   , resp = null
@@ -12,7 +12,7 @@ resp = createChannel("resp");
 resp.bind("proc://test");
 resp.on("message", function(msg) {
 
-  replyTo(msg, msg.data);
+  msg.send(msg);
 
   if (++count == requests) {
     setTimeout(function() {
