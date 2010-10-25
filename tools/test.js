@@ -26,7 +26,7 @@
  *
  */
 
-const print               = require("sys").print
+const print               = require("util").print
     , spawn               = require("child_process").spawn
     , stat                = require("fs").statSync
     , readdir             = require("fs").readdirSync
