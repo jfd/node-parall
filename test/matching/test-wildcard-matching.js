@@ -1,9 +1,9 @@
 const ok                = require("assert").ok
     , equal             = require("assert").equal
     , deepEqual         = require("assert").deepEqual
-    , match             = require("../../lib/matching").match
-    , when              = require("../../lib/matching").when
-    , _                 = require("../../lib/matching").wildcard
+    , match             = require("../../lib").match
+    , when              = require("../../lib").when
+    , _                 = require("../../lib")._
     
 
 var m = null
@@ -12,10 +12,10 @@ var m = null
 
 
 function result(no) {
-  return function(ctx, callback) {
-    matchResult = this;
+  return function(args, callback) {
+    matchResult = args;
     matched = no;
-    return this;
+    return args;
   }
 }
     

@@ -1,8 +1,9 @@
-const ok                = require("assert").ok
+const Buffer            = require("buffer").Buffer
+    , ok                = require("assert").ok
     , equal             = require("assert").equal
     , deepEqual         = require("assert").deepEqual
-    , mmatch            = require("../../lib/matching").mmatch
-    , when              = require("../../lib/matching").when
+    , mmatch            = require("../../lib").mmatch
+    , when              = require("../../lib").when
 
 var m = null
   , matched = null
@@ -10,17 +11,17 @@ var m = null
   , matchedId = null
 
 
-function FakeMessage() {
-  this.id = 1;
-  this.data = ["abc", 123];
-}
+var fakeMessage = new Buffer(JSON.stringify(["abc", 123]), "utf8");
+fakeMessage.id = 1;
+fakeMessage.encoding = "json";
+fakeMessage.send = function() {};
 
 function result(no) {
-  return function(ctx, callback) {
-    matchResult = this;
+  return function(args, callback) {
+    matchResult = args;
     matched = no;
-    matchedId = ctx.id;
-    return this;
+    matchedId = this.id;
+    return args;
   }
 }
     
@@ -30,5 +31,5 @@ m = mmatch(
   )
 );
 
-ok(m(new FakeMessage())) || equal(matched, 1) || deepEqual(matchResult, []) ||
+ok(m(fakeMessage)) || equal(matched, 1) || deepEqual(matchResult, []) ||
   equal(matchedId, 1);

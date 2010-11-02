@@ -12,11 +12,11 @@ var m = null
 
 
 function result(no) {
-  return function(ctx, callback) {
+  return function(args, callback) {
     calls = 1;
-    matchResult = this;
+    matchResult = args;
     matched = no;
-    return this;
+    return args;
   }
 }
 
