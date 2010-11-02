@@ -20,16 +20,34 @@ function result(no) {
 }
 
 function CustomMatcher(value, result) {
-  result.push(1);
-  return true;
+  if (value == 1) {
+    result.push(value);
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function OtherCustomMatcher(value, result) {
+  if (value == 2) {
+    result.push(value, value);
+    return true;
+  } else {
+    return false;
+  }
 }
     
 m = match(
   
   when ("test", CustomMatcher) (
-    
+    result(1)
+  ),
+  
+  when ("test", OtherCustomMatcher) (
+    result(2)
   )
+  
 );
 
-ok(m("test", 1, 1)) || equal(matched, 1) || deepEqual(matchResult, [1]);
-ok(m(1, 1)) || equal(matched, 2) || deepEqual(matchResult, []);
+ok(m("test", 1)) || equal(matched, 1) || deepEqual(matchResult, [1]);
+ok(m("test", 2)) || equal(matched, 2) || deepEqual(matchResult, [2, 2]);
