@@ -16,8 +16,6 @@ connection.on("connect", function() {
 });
 
 connection.on("data", function(data) {
-  console.log("data in");
-  
   equal(DATA, data);
   process.exit();
 });

@@ -3,21 +3,19 @@ const Stream            = require("net").Stream
     , send              = require("../../../lib/").send
     , mmatch            = require("../../../lib/").mmatch
     , when              = require("../../../lib/").when
+    , Fd                = require("../../../lib/").Fd
 
 var worker = null
-var lastfd;
 
 worker = createChannel("worker");
 worker.encoding = "json";
 worker.connect("proc://worker-pool");
 worker.on("message", mmatch(  
  
-  when ("hook-fd", Number) (
+  when ("hook-fd", Fd) (
     function(args) {
-      var fd = this._fd;
+      var fd = args[0];
       var stream = new Stream(fd);
-      lastfd = fd;
-      console.log("fdadd_ " + fd);
       stream.on("data", function(data) {
         this.write(data);
       });
@@ -28,7 +26,3 @@ worker.on("message", mmatch(
   )
   
 ));
-
-process.on("uncaughtException", function(err) {
-  console.log("uncaughtException " + lastfd);
-})

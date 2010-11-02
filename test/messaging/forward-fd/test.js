@@ -4,7 +4,7 @@ const ok                = require("assert").ok
     , createChannel     = require("../../../lib").createChannel
     , spawn             = require("../../../lib").spawn
     , send              = require("../../../lib").send
-    , $fd               = require("../../../lib").$fd
+    , Fd                = require("../../../lib").Fd
     , release           = require("../../../lib").release
     , match             = require("../../../lib").match
     , when              = require("../../../lib").when
@@ -37,7 +37,7 @@ workerpool.on("exit", function(worker, code, no, error) {
 });
 
 server = createServer(function(stream) {
-  send(master, "hook-fd", $fd(stream), 
+  send(master, "hook-fd", Fd(stream), 
     match(
       when('OK') ( 
         release(stream)
@@ -53,7 +53,6 @@ server = createServer(function(stream) {
 server.listen(TCP_PORT, TCP_HOST);
 
 clientpool = spawn("./client", POOL_SIZE);
-clientpool.on("exit", function(code, s, error) {
-  equal(error, null);
+clientpool.on("empty", function() {
   shutdown();
 });
