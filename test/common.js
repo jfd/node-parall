@@ -9,13 +9,19 @@ var timer = null;
 
 exports.timeout = function(timeout) {
   timer = setTimeout(function() {
-    throw new Error("Timeout reached");
+    exports.shutdown(new Error("Timeout reached"));
   }, timeout);
 }
 
-exports.shutdown = function() {
+exports.shutdown = function(exception) {
   clearTimeout(timer);
-  process.exit();
+
+  if (exception) {
+    process.removeAllListeners("uncaughtException");
+    throw exception;
+  } else {
+    process.exit();
+  }
 }
 
 exports.createPayload = function(size) {
