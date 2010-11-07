@@ -9,7 +9,7 @@ const POOL_SIZE         = 4;
 
 var master  = null
   , pool  = null
-  , connectCount = 0
+  , connections = 0
   , closingFired = false
   , closeFired = false;
 
@@ -18,8 +18,7 @@ timeout(5000);
 master = createChannel("master");
 master.bind("proc://worker-pool");
 master.on("endpointConnect", function() {
-  connectCount++;
-  if (connectCount == POOL_SIZE) {
+  if (++connections == POOL_SIZE) {
     master.close();
   }
 });
@@ -30,9 +29,14 @@ master.on("close", function() {
   closeFired = true;
 });
 
-pool = spawn("./worker.js", POOL_SIZE);
-pool.on("empty", function() {
-  ok(closingFired);
-  ok(closeFired);
-  shutdown();
-});
+function onexit() {
+  if (!(--connections)) {
+    ok(closingFired);
+    ok(closeFired);
+    shutdown();
+  }
+}
+
+for (var i = 0; i < POOL_SIZE; i++) {
+  spawn("./worker.js").on("exit", onexit);
+}

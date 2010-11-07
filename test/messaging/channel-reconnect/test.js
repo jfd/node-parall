@@ -22,7 +22,7 @@ function procTest() {
     equal(answer, "ok");
     process.nextTick(sockTest);
   });
-  pool = spawn("./proc_server", 1);  
+  spawn("./proc_server");  
 }
 
 
@@ -37,7 +37,7 @@ function sockTest() {
     equal(answer, "ok");
     process.nextTick(tcpTest);
   });
-  pool = spawn("./sock_server", 1);  
+  spawn("./sock_server");  
 }
 
 function tcpTest() {
@@ -51,7 +51,7 @@ function tcpTest() {
     equal(answer, "ok");
     shutdown();
   });
-  pool = spawn("./tcp_server", 1);  
+  spawn("./tcp_server");  
 }
 
 process.nextTick(procTest);

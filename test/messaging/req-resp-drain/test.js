@@ -12,7 +12,8 @@ const POOL_SIZE         = 2,
       MESSAGE_SIZE      = 10240
 
 var master  = null
-  , pool  = null
+  , workers  = []
+  , connections = POOL_SIZE
   , count = 0
   , graph = createPayload(MESSAGE_SIZE)
 
@@ -21,25 +22,23 @@ timeout(5000);
 master = createChannel("master");
 master.encoding = "raw";
 master.bind("proc://worker-pool");
+master.on("endpointDisconnect", function() {
+  if (!(--connections)) {
+    equal(count, REQUESTS_TO_SEND);
+    shutdown();
+  }
+});
 
-pool = spawn("./worker.js", POOL_SIZE, [REQUESTS_TO_SEND / POOL_SIZE]);
-pool.on("exit", function(worker, code, no, error) {
-  if (code) {
-    throw new Error(error);
-  }
-});
-pool.on("empty", function(err, err1,err2) {
-  if (count != REQUESTS_TO_SEND) {
-    throw new Error("Request count mismatch");
-  }
-  
-  shutdown();
-});
+for (var i = 0; i < POOL_SIZE; i++) {
+  workers.push(spawn("./worker", REQUESTS_TO_SEND / POOL_SIZE));
+}
 
 for (var i = 0; i < REQUESTS_TO_SEND; i++) {
   master.send(graph, function() {
     if (++count == REQUESTS_TO_SEND) {
-      pool.kill();
+      workers.forEach(function(worker) {
+        worker.kill();
+      });
     }
   });
 }

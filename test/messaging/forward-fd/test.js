@@ -20,8 +20,7 @@ const TCP_PORT          = require("../../common").TCP_PORT
     , TCP_HOST          = require("../../common").TCP_HOST;
 
 var master      = null
-  , workerpool  = null
-  , clientpool  = null;
+  , connections = POOL_SIZE
 
 timeout(5000);
 
@@ -29,12 +28,9 @@ master = createChannel("master");
 master.encoding = "json";
 master.bind("proc://worker-pool");
 
-workerpool = spawn("./worker.js", POOL_SIZE);
-workerpool.on("exit", function(worker, code, no, error) {
-  if (code) {
-    throw new Error(error);
-  }
-});
+for (var i = 0; i < POOL_SIZE; i++) {
+  spawn("./worker");
+}
 
 server = createServer(function(stream) {
   send(master, "hook-fd", Fd(stream), 
@@ -52,7 +48,10 @@ server = createServer(function(stream) {
 });
 server.listen(TCP_PORT, TCP_HOST);
 
-clientpool = spawn("./client", POOL_SIZE);
-clientpool.on("empty", function() {
-  shutdown();
-});
+for (var i = 0; i < POOL_SIZE; i++) {
+  spawn("./client").on("exit", function() {
+    if (!(--connections)) {
+      shutdown();     
+    }
+  });
+}

@@ -31,13 +31,20 @@ pub.on("endpointConnect", function() {
   // We need a timeout here. Child needs time to send the SUBSCRIBE message
   (++connections == POOL_SIZE) && setTimeout(bcast, 200);
 });
-
-pool = spawn("./worker.js", POOL_SIZE, [MESSAGES_TO_SEND, MESSAGE]);
-
-pool.on("exit", function(worker, error) {
-  if (error) {
-    throw error;
+pub.on("endpointDisconnect", function() {
+  if (!(--connections)) {
+    shutdown();
   }
 });
 
-pool.on("empty", shutdown);
+// pool = spawn("./worker", POOL_SIZE, [MESSAGES_TO_SEND, MESSAGE]);
+// 
+// pool.on("exit", function(worker, error) {
+//   if (error) {
+//     throw error;
+//   }
+// });
+
+for (var i = 0; i < POOL_SIZE; i++) {
+  spawn("./worker", MESSAGES_TO_SEND, MESSAGE);  
+}

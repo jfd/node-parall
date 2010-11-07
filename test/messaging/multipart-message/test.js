@@ -46,21 +46,11 @@ timeout(2000);
 
 req = createChannel("req");
 req.connect("proc://test");
+req.on("endpointDisconnect", function() {
+  equal(reqcount, REQUESTS_TO_SEND);
+  shutdown();
+});
 
 sendMessages(req, buildMessage(MESSAGE_SIZE), REQUESTS_TO_SEND);
 
-pool = spawn("./resp.js", 1, [REQUESTS_TO_SEND]);
-
-pool.on("exit", function(worker, code, sig, error) {
-
-  if (error) {
-    throw error;
-  }
-});
-
-pool.on("empty", function() {
-  
-  equal(reqcount, REQUESTS_TO_SEND);
-  
-  shutdown();
-});
+spawn("./resp", REQUESTS_TO_SEND);

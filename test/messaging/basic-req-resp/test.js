@@ -1,5 +1,5 @@
 const ok                = require("assert").ok
-    , throws            = require("assert").throws
+    , equal             = require("assert").equal
     , createChannel     = require("../../../lib").createChannel
     , spawn             = require("../../../lib").spawn
     , send              = require("../../../lib").send
@@ -13,6 +13,7 @@ const POOL_SIZE         = 2,
 var resp  = null
   , pool  = null
   , count = 0
+  , disconnects = 0;
   
 timeout(2000);
 
@@ -32,19 +33,13 @@ resp.on("message", function(msg) {
   send.call(msg, "ok");
 });
 
-pool = spawn("./request.js", POOL_SIZE, [REQUESTS_TO_SEND]);
-
-pool.on("exit", function(worker, code, signal, error) {
-  if (error) {
-    throw error;
+resp.on("endpointDisconnect", function() {
+  if (++disconnects == POOL_SIZE) {
+    equal(count, POOL_SIZE * REQUESTS_TO_SEND);
+    shutdown();
   }
 });
 
-pool.on("empty", function() {
-  
-  if (count != POOL_SIZE * REQUESTS_TO_SEND) {
-    throw new Error("Message count mismatch");
-  }
-  
-  shutdown();
-});
+for (var i = 0; i < POOL_SIZE; i++) {
+  spawn("./request", REQUESTS_TO_SEND);
+}

@@ -10,14 +10,13 @@ const POOL_SIZE         = 2,
       RANDOM_BYTES      = "LOreM DOreM IPSUM"
 
 var pub   = null
-  , pool  = null
-  , nullpool = null
-  , activepools = 0
+  , connections = 0
   , count = 0
   , pids = []
   , subs = 0
   , longestKey = 0
   , hasVariants = false
+  , worker
   
 function getbytes(pid) {
   var buffer = new Buffer(pid + RANDOM_BYTES, "ascii");
@@ -27,18 +26,6 @@ function getbytes(pid) {
     longestKey = buffer.pidLength;
   }
   return buffer;
-}
-
-function onpoolfull() {
-  if (++activepools == 2) {
-    setTimeout(startseige, 100);
-  }  
-}
-
-function onpoolempty() {
-  if (--activepools == 0) {
-    process.nextTick(stopseige);
-  }  
 }
 
 function startseige() {
@@ -76,20 +63,23 @@ pub.on("unsubscribe", function(pattern) {
   subs--;
 });
 
-pool = spawn("./subscriber.js", POOL_SIZE, [BCASTS_TO_RECV]);
-pool.on("spawn", function(worker) {
-  pids.push(getbytes(worker.pid));
-});
-pool.on("exit", function(worker, error) {
-  if (error) {
-    throw error;
+pub.on("endpointConnect", function() {
+  if (++connections == POOL_SIZE * 2) {
+    setTimeout(startseige, 100);
   }
 });
-pool.on("full", onpoolfull);
-pool.on("empty", onpoolempty);
 
-nullpool = spawn("./nullsubscriber.js", POOL_SIZE, 
-                                        [BCASTS_TO_RECV * POOL_SIZE]);
+pub.on("endpointDisconnect", function() {
+  if (!(--connections)) {
+    process.nextTick(stopseige);    
+  }
+});
 
-nullpool.on("full", onpoolfull);
-nullpool.on("empty", onpoolempty);
+for (var i = 0; i < POOL_SIZE; i++) {
+  worker = spawn("./subscriber", BCASTS_TO_RECV);
+  pids.push(getbytes(worker.pid));
+}
+
+for (var i = 0; i < POOL_SIZE; i++) {
+  spawn("./nullsubscriber", BCASTS_TO_RECV * POOL_SIZE);
+}
