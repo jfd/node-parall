@@ -1,9 +1,8 @@
 const join            = require("path").join
     , stat            = require("fs").stat
     , writeFile       = require("fs").writeFile
+    , spawn           = require("parall").spawn
 
-const TMP_PATH      = require("../../common").TMP_PATH
-console.log("worker: " + process.argv[2]);
 switch (process.argv[2]) {
 
   case "after-timeout":
@@ -11,8 +10,27 @@ switch (process.argv[2]) {
       throw new Error("WorkerError");
     }, 100);
     break;
+
+  case "reference":
+    setTimeout(function() {
+      a
+    }, 100);
+    break;
     
   case "at-startup":
     throw new Error("WorkerError");
     break;
+    
+  case "subworker-ref":
+    spawn("./worker", "reference");
+    break;
+
+  case "subworker-startup":
+    spawn("./worker", "at-startup");
+    break;
+
+  case "subworker-timeout":
+    spawn("./worker", "after-timeout");
+    break;
+    
 }
