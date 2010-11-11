@@ -18,7 +18,9 @@ exports.shutdown = function(exception) {
 
   if (exception) {
     process.removeAllListeners("uncaughtException");
-    throw exception;
+    process.nextTick(function() {
+      throw exception;      
+    });
   } else {
     process.exit();
   }
