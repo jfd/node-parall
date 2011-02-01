@@ -1,4 +1,4 @@
-# Messaging
+# Channel
 
 
 
@@ -8,11 +8,12 @@
 
 Returns a new channel object of specified ´'type'´. 
 
-## Channel
+## channel.Channel
 
 A Channel represents a message transport bridge. There is a number of 
-different type of channels, each with it's own characteristics. To create
-a new Channel object, use ´require("parall").createChannel. 
+different type of channels, each with it's own characteristics. 
+
+To create a new Channel object, use ´require("parall").createChannel. 
 
 Available channel types are:
   
@@ -48,17 +49,17 @@ This event is emitted when the channel is about to close.
  
 This event is emitted when the channel is completely closed.
 
-### Event: 'endpointConnect'
+### Event: 'connect'
 
 ´function(stream) { }´
  
-This event is emitted when a new endpoint connects to the channel.
+This event is emitted when a new socket connects to the channel.
 
-### Event: 'endpointDisconnect'
+### Event: 'disconnect'
 
 ´function(stream) { }´
  
-This event is emitted when a connected endpoint disconnects.
+This event is emitted when a connected socket disconnects.
 
 
 ### Channel.type
@@ -93,9 +94,9 @@ Sends the specified `'msg'` buffer to the channel.
 
 The `send` method works differently between channel types. The 
 request/response based channels, `'req'` and `'master'`, send the message 
-to one of it's endpoints (based on a round-robin algorithm). The 
+to one of it's sockets (based on a round-robin algorithm). The 
 publish/subscribe based channel, `'pub'`, send the message to all 
-connected endpoints.
+connected sockets.
 
 The request/response version of the method also takes an optional
 `'callback'` argument, that is called upon a valid response.
@@ -107,6 +108,10 @@ Example using a `'req'` channel:
       console.log("Response from remote: %s", msg);
     });
 
+
+### Channel.attach(fd)
+
+Attach a FD to this server channel.
 
 
 ### Channel.close()
