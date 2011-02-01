@@ -66,18 +66,16 @@ This event is emitted when a connected socket disconnects.
 
 Returns the channel type (listed above).
 
-### Channel.encoding
 
-Get or sets prefered encoding for this channel. The message is NOT 
-encoded/decoded on send/receive. This property only sets the prefered
-encoding method, which can be used by third-party utility functions.
+### Channel.sockets
 
-See valid encoding methods in the "encodings" section.
+Returns an `Array` with all attached sockets. The sockets may
+be connecting, connected, disconnecting and/or disconnected.
 
 
 ### Channel.connect(url)
 
-Connect this channel to specfieid `'url'`. 
+Connect this channel to the specified `'url'`. 
 
 This example connect's the channel to tcp address 127.0.0.1 on
 port 7000:
@@ -86,6 +84,22 @@ port 7000:
     channel.connect("tcp://127.0.0.1:7000");
 
 Channel's with the `connect` method are: `req`, `worker` and `sub`.
+
+
+### Channel.listen(url, [callback])
+
+Listen for connections on the specified `url`. The `'url'` is the 
+address that should be bound. The `'callback'` is optional and is 
+triggered on connect or error.
+
+This example bind's the channel to tcp address 127.0.0.1 on
+port 7000:
+
+    var channel = createChannel("pub");
+    channel.bind("tcp://127.0.0.1:7000");
+
+Channel's with the bind method are: `resp`, `master` and `pub`.
+
 
 
 ### Channel.send(msg)
@@ -109,9 +123,9 @@ Example using a `'req'` channel:
     });
 
 
-### Channel.attach(fd)
+### Channel.attach(socket)
 
-Attach a FD to this server channel.
+Attaches a valid `socket`. The `ParallSocket` must of correct type. 
 
 
 ### Channel.close()

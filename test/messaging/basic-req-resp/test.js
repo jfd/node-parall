@@ -2,13 +2,11 @@ const ok                = require("assert").ok
     , equal             = require("assert").equal
     , createChannel     = require("../../../lib").createChannel
     , spawn             = require("../../../lib").spawn
-    , send              = require("../../../lib").send
-    , decode            = require("../../../lib").decode
     , timeout           = require("../../common").timeout
     , shutdown          = require("../../common").shutdown
 
-const POOL_SIZE         = 2,
-      REQUESTS_TO_SEND  = 10
+const POOL_SIZE         = 1,
+      REQUESTS_TO_SEND  = 1
 
 var resp  = null
   , pool  = null
@@ -18,22 +16,19 @@ var resp  = null
 timeout(2000);
 
 resp = createChannel("resp");
-resp.encoding = "json";
-resp.bind("proc://req-resp");
+resp.listen("proc://req-resp");
 
 resp.on("message", function(msg) {
-  var graph = decode(msg, "json");
 
-  if (graph[0] !== "hello world") {
-    throw new Error("Type mismatch");
-  }
+  equal(msg.graph[0], "hello world");
 
   count++;
   
-  send.call(msg, "ok");
+  msg.send("ok");
 });
 
-resp.on("endpointDisconnect", function() {
+resp.on("disconnect", function() {
+        console.log("state: " + state);
   if (++disconnects == POOL_SIZE) {
     equal(count, POOL_SIZE * REQUESTS_TO_SEND);
     shutdown();
@@ -41,5 +36,5 @@ resp.on("endpointDisconnect", function() {
 });
 
 for (var i = 0; i < POOL_SIZE; i++) {
-  spawn("./request", REQUESTS_TO_SEND);
+  spawn("./request", REQUESTS_TO_SEND, "pipe");
 }
