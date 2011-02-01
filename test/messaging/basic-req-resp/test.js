@@ -5,8 +5,8 @@ const ok                = require("assert").ok
     , timeout           = require("../../common").timeout
     , shutdown          = require("../../common").shutdown
 
-const POOL_SIZE         = 1,
-      REQUESTS_TO_SEND  = 1
+const POOL_SIZE         = 2,
+      REQUESTS_TO_SEND  = 10
 
 var resp  = null
   , pool  = null
@@ -28,7 +28,6 @@ resp.on("message", function(msg) {
 });
 
 resp.on("disconnect", function() {
-        console.log("state: " + state);
   if (++disconnects == POOL_SIZE) {
     equal(count, POOL_SIZE * REQUESTS_TO_SEND);
     shutdown();
