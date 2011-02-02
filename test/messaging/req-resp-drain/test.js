@@ -20,9 +20,8 @@ var master  = null
 timeout(5000);
 
 master = createChannel("master");
-master.encoding = "raw";
-master.bind("proc://worker-pool");
-master.on("endpointDisconnect", function() {
+master.listen("proc://worker-pool");
+master.on("disconnect", function() {
   if (!(--connections)) {
     equal(count, REQUESTS_TO_SEND);
     shutdown();
@@ -30,7 +29,7 @@ master.on("endpointDisconnect", function() {
 });
 
 for (var i = 0; i < POOL_SIZE; i++) {
-  workers.push(spawn("./worker", REQUESTS_TO_SEND / POOL_SIZE));
+  workers.push(spawn("./worker", [REQUESTS_TO_SEND / POOL_SIZE]));
 }
 
 for (var i = 0; i < REQUESTS_TO_SEND; i++) {

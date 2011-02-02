@@ -9,8 +9,7 @@ var worker = null
   , response = createPayload(10);
 
 worker = createChannel("worker");
-worker.encoding = "raw";
 worker.connect("proc://worker-pool");
 worker.on("message", function(msg) {
-  send(msg, response);
+  msg.send(response);
 });
