@@ -19,15 +19,14 @@ var master  = null
 timeout(5000);
 
 master = createChannel("master");
-master.encoding = "json";
-master.bind("proc://worker-pool");
-master.on("endpointConnect", function() {
+master.listen("proc://worker-pool");
+master.on("connect", function() {
   if (++connections == POOL_SIZE) {
     setTimeout(function() {
       var rejectRequestsToSend = POOL_SIZE / 2;
 
       while (rejectRequestsToSend--) {
-        send(master, "set-reject", function(resp, pid) {
+        master.send("set-reject", function(msg, resp, pid) {
           rejectingPids.push(pid);
         });
       }
@@ -35,7 +34,7 @@ master.on("endpointConnect", function() {
       setTimeout(function() {
         var reqcount = REQUESTS_TO_SEND;
         while (reqcount--) {
-          send(master, "ping", function(resp, pid) {
+          master.send("ping", function(msg, resp, pid) {
             equal(resp, "pong");
             equal(rejectingPids.indexOf(pid), -1);
             if (++count == REQUESTS_TO_SEND) {
@@ -50,7 +49,7 @@ master.on("endpointConnect", function() {
     }, 200);
   }
 });
-master.on("endpointDisconnect", function() {
+master.on("disconnect", function() {
   if (!(--connections)) {
     equal(count, REQUESTS_TO_SEND);
     shutdown();
@@ -58,5 +57,5 @@ master.on("endpointDisconnect", function() {
 });
 
 for (var i = 0; i < POOL_SIZE; i++) {
-  workers.push(spawn("./worker"));
+  workers.push(spawn("./worker", "pipe"));
 }
