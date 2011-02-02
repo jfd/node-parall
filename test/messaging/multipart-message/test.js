@@ -6,7 +6,7 @@ const equal             = require("assert").equal
     , timeout           = require("../../common").timeout
     , shutdown          = require("../../common").shutdown
 
-const REQUESTS_TO_SEND  = 20,
+const REQUESTS_TO_SEND  = 10,
       MESSAGE_SIZE      = 1024 * 100
 
 var req  = null
@@ -26,7 +26,7 @@ function sendMessages(channel, outmsg, count) {
   while (count--) {
     channel.send(outmsg, function(inmsg) {
       reqcount++;
-      compare(outmsg, inmsg);
+      compare(outmsg, inmsg.graph);
     });
   }
 }
@@ -46,11 +46,11 @@ timeout(2000);
 
 req = createChannel("req");
 req.connect("proc://test");
-req.on("endpointDisconnect", function() {
+req.on("disconnect", function() {
   equal(reqcount, REQUESTS_TO_SEND);
   shutdown();
 });
 
 sendMessages(req, buildMessage(MESSAGE_SIZE), REQUESTS_TO_SEND);
 
-spawn("./resp", REQUESTS_TO_SEND);
+spawn("./resp", [REQUESTS_TO_SEND], "pipe");

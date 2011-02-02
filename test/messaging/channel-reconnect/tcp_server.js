@@ -2,6 +2,7 @@ const equal             = require("assert").equal
     , createChannel     = require("../../../lib").createChannel
     , send              = require("../../../lib").send
     , decode            = require("../../../lib").decode
+    , geturi            = require("../../../lib").geturi
 
 const TCP_PORT          = require("../../common").TCP_PORT
     , TCP_HOST          = require("../../common").TCP_HOST
@@ -9,13 +10,9 @@ const TCP_PORT          = require("../../common").TCP_PORT
 var resp = null;
 
 resp = createChannel("resp");
-resp.encoding = "json";
-resp.bind("tcp://" + TCP_HOST + ":" + TCP_PORT);
+resp.listen(geturi("tcp", TCP_HOST, TCP_PORT));
 resp.on("message", function(msg) {
-  var graph = decode(msg, "json");
-  equal(graph[0], "test");
-  send.call(msg, "ok");
-  process.nextTick(function() {
-    process.exit();
-  });
+  equal(msg.graph[0], "test");
+  process.nextTick(function() { process.exit() });
+  return msg.ok();
 });

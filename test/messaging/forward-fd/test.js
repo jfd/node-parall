@@ -3,13 +3,6 @@ const ok                = require("assert").ok
     , createServer      = require("net").createServer
     , createChannel     = require("../../../lib").createChannel
     , spawn             = require("../../../lib").spawn
-    , send              = require("../../../lib").send
-    , Fd                = require("../../../lib").Fd
-    , release           = require("../../../lib").release
-    , match             = require("../../../lib").match
-    , when              = require("../../../lib").when
-    , format            = require("../../../lib").format
-    , after             = require("../../../lib").after
     , timeout           = require("../../common").timeout
     , shutdown          = require("../../common").shutdown
 
@@ -25,26 +18,17 @@ var master      = null
 timeout(5000);
 
 master = createChannel("master");
-master.encoding = "json";
-master.bind("proc://worker-pool");
+master.listen("proc://worker-pool");
 
 for (var i = 0; i < POOL_SIZE; i++) {
   spawn("./worker");
 }
 
-server = createServer(function(stream) {
-  send(master, "hook-fd", Fd(stream), 
-    match(
-      when('OK') ( 
-        release(stream)
-      ),
-      after (2000) (
-        function(args) {
-          throw new Error("Worker timeout");
-          return args;
-        }
-      )
-  ));
+server = createServer(function(socket) {
+  master.send("hook-fd", socket, function(msg, status) {
+    equal(status, 'OK');
+    socket.destroy();
+  })
 });
 server.listen(TCP_PORT, TCP_HOST);
 

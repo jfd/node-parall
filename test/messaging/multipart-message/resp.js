@@ -9,10 +9,10 @@ var requests = parseInt(process.argv[2])
 
 resp = createChannel("resp");
 
-resp.bind("proc://test");
+resp.listen("proc://test");
 resp.on("message", function(msg) {
 
-  msg.send(msg);
+  msg.send(msg.graph);
 
   if (++count == requests) {
     setTimeout(function() {

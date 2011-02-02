@@ -18,26 +18,26 @@ var master  = null
 timeout(5000);
 
 master = createChannel("master");
-master.encoding = "json";
-master.bind("proc://worker-pool");
-master.on("endpointConnect", function() {
+master.listen("proc://worker-pool");
+master.on("connect", function() {
   if (++connections == POOL_SIZE) {
     setTimeout(function() {
       var reqcount = REQUESTS_TO_SEND;
       while (reqcount--) {
-        send(master, "do", function(ok, token) {
-          if (ok !== "ok") throw new Error(ok);
+        master.send("do", function(msg, ok, token) {
+          equal(ok, 'OK');
           if (tokens.indexOf(token) !== -1) {
             throw new Error("Token already received");
           }
           tokens.push(token);
+          // console.log("count: %s, of: %s" , count, REQUESTS_TO_SEND);
           if (++count == REQUESTS_TO_SEND) {
-            equal(master._readyRemoteEndpoints.length, POOL_SIZE);
+            equal(master._readySockets.length, POOL_SIZE);
             for (var i = 0; i < POOL_SIZE; i++) {
-              equal(master._readyRemoteEndpoints[i].outgoingCount, 0);
-              Object.keys(master._readyRemoteEndpoints[i]._ackWaitPool)
+              equal(master._readySockets[i]._outgoingcount, 0);
+              Object.keys(master._readySockets[i]._ackwaitpool)
                 .forEach(function(key) {
-                  equal(master._readyRemoteEndpoints[i]._ackWaitPool[key], 
+                  equal(master._readySockets[i]._ackwaitpool[key], 
                         undefined);
               });
             }
@@ -50,7 +50,7 @@ master.on("endpointConnect", function() {
     }, 200);
   }
 });
-master.on("endpointDisconnect", function() {
+master.on("disconnect", function() {
   equal(count, REQUESTS_TO_SEND);
   shutdown();
 });

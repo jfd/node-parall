@@ -1,4 +1,6 @@
-const Stream            = require("net").Stream
+const Socket            = require("net").Socket
+    , equal             = require("assert").equal
+    , ok                = require("assert").ok
     , createChannel     = require("../../../lib").createChannel
     , send              = require("../../../lib/").send
     , mmatch            = require("../../../lib/").mmatch
@@ -8,21 +10,19 @@ const Stream            = require("net").Stream
 var worker = null
 
 worker = createChannel("worker");
-worker.encoding = "json";
 worker.connect("proc://worker-pool");
-worker.on("message", mmatch(  
- 
-  when ("hook-fd", Fd) (
-    function(args) {
-      var fd = args[0];
-      var stream = new Stream(fd);
-      stream.on("data", function(data) {
-        this.write(data);
-      });
-      stream.resume();
-      return args;
-    },
-    send('OK')
-  )
+worker.on("message", function(msg) {
+  var socket;
   
-));
+  equal(msg.graph[0], "hook-fd");
+  ok(typeof msg.graph[1] == "number");
+  
+  socket = new Socket(msg.graph[1]);
+  socket.on("data", function(data) {
+    this.write(data);
+  });
+  
+  socket.resume();
+  
+  msg.ok();
+});

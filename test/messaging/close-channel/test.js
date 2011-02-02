@@ -16,8 +16,8 @@ var master  = null
 timeout(5000);
 
 master = createChannel("master");
-master.bind("proc://worker-pool");
-master.on("endpointConnect", function() {
+master.listen("proc://worker-pool");
+master.on("connect", function() {
   if (++connections == POOL_SIZE) {
     master.close();
   }

@@ -6,13 +6,9 @@ const equal             = require("assert").equal
 var resp = null;
 
 resp = createChannel("resp");
-resp.encoding = "json";
-resp.bind("sock://server");
+resp.listen("sock://server");
 resp.on("message", function(msg) {
-  var graph = decode(msg, "json");
-  equal(graph[0], "test");
-  send.call(msg, "ok");
-  process.nextTick(function() {
-    process.exit();
-  });
+  equal(msg.graph[0], "test");
+  process.nextTick(function() { process.exit() });
+  return msg.ok();
 });

@@ -2,7 +2,7 @@ const equal             = require("assert").equal
     , doesNotThrow      = require("assert").doesNotThrow
     , createChannel     = require("../../../lib").createChannel
     , spawn             = require("../../../lib").spawn
-    , send              = require("../../../lib").send
+    , geturi            = require("../../../lib").geturi
     , timeout           = require("../../common").timeout
     , shutdown          = require("../../common").shutdown
 
@@ -16,10 +16,9 @@ function procTest() {
   var pool = null;
   
   req = createChannel("req");
-  req.encoding = "json";
   req.connect("proc://server");
-  send(req, "test", function(answer) {
-    equal(answer, "ok");
+  req.send("test", function(msg, state) {
+    equal(state, 'OK');
     process.nextTick(sockTest);
   });
   spawn("./proc_server");  
@@ -31,10 +30,9 @@ function sockTest() {
   var pool = null;
 
   req = createChannel("req");
-  req.encoding = "json";
   req.connect("sock://server");
-  send(req, "test", function(answer) {
-    equal(answer, "ok");
+  req.send("test", function(msg, state) {
+    equal(state, 'OK');
     process.nextTick(tcpTest);
   });
   spawn("./sock_server");  
@@ -45,10 +43,9 @@ function tcpTest() {
   var pool = null;
 
   req = createChannel("req");
-  req.encoding = "json";
-  req.connect("tcp://" + TCP_HOST + ":" + TCP_PORT);
-  send(req, "test", function(answer) {
-    equal(answer, "ok");
+  req.connect(geturi("tcp", TCP_HOST, TCP_PORT));
+  req.send("test", function(msg, state) {
+    equal(state, 'OK');
     shutdown();
   });
   spawn("./tcp_server");  
