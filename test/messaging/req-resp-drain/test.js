@@ -19,7 +19,7 @@ var master  = null
 
 timeout(5000);
 
-master = createChannel("master");
+master = createChannel("req");
 master.listen("proc://worker-pool");
 master.on("disconnect", function() {
   if (!(--connections)) {
@@ -29,11 +29,14 @@ master.on("disconnect", function() {
 });
 
 for (var i = 0; i < POOL_SIZE; i++) {
-  workers.push(spawn("./worker", [REQUESTS_TO_SEND / POOL_SIZE]));
+  workers.push(spawn("./worker", [MESSAGE_SIZE], "pipe"));
 }
 
 for (var i = 0; i < REQUESTS_TO_SEND; i++) {
-  master.send(graph, function() {
+  // console.log("send %s", i)
+  master.send(graph, function(msg) {
+    // console.log("received response %s/%s", count, REQUESTS_TO_SEND)
+    // console.log("msg length: %s", msg.graph.constructor);
     if (++count == REQUESTS_TO_SEND) {
       workers.forEach(function(worker) {
         worker.kill();
