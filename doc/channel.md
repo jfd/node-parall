@@ -51,13 +51,13 @@ This event is emitted when the channel is completely closed.
 
 ### Event: 'connect'
 
-´function(stream) { }´
+´function(socket) { }´
  
 This event is emitted when a new socket connects to the channel.
 
 ### Event: 'disconnect'
 
-´function(stream) { }´
+´function(socket) { }´
  
 This event is emitted when a connected socket disconnects.
 

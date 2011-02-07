@@ -1,5 +1,4 @@
-const ok                = require("assert").ok
-    , throws            = require("assert").throws
+const equal             = require("assert").equal
     , createChannel     = require("../../../lib").createChannel
 
 var messages = parseInt(process.argv[2])
@@ -7,14 +6,11 @@ var messages = parseInt(process.argv[2])
   , sub = null;
 
 sub = createChannel("sub");
-sub.encoding = "ascii";
 sub.subscribe("");
 sub.connect("proc://pub-sub");
 sub.on("message", function(msg) {
 
-  if (message != msg) {
-    throw new Error("Bad format");
-  }
+  equal(message, msg.graph);
 
   if (--messages == 0) {
     process.exit();
