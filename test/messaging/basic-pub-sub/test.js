@@ -19,7 +19,7 @@ timeout(5000);
 function bcast() {
   var count = MESSAGES_TO_SEND;
   while (count--) {
-    pub.send(MESSAGE);
+    pub.send(new Buffer(MESSAGE));
   }
 }
 

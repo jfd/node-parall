@@ -10,7 +10,7 @@ sub.subscribe("");
 sub.connect("proc://pub-sub");
 sub.on("message", function(msg) {
 
-  equal(message, msg.graph);
+  equal(message, msg.graph.toString());
 
   if (--messages == 0) {
     process.exit();
