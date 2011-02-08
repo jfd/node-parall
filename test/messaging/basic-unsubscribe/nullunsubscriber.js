@@ -13,7 +13,6 @@ sub = createChannel("sub");
 sub.connect("proc://test-channel");
 sub.subscribe("");
 sub.on("message", function(msg) {
-  var graph = msg.toString("ascii");
 
   if (didunsubscribe && !didsubscribe) {
     throw new Error("Received message when in unsubscribe mode");
@@ -21,14 +20,14 @@ sub.on("message", function(msg) {
 
   if (++count == NO_MESSAGE && !didunsubscribe) {
     sub.unsubscribe("");
-    equal(Object.keys(sub._subscriptions).length, 0);
+    equal(Object.keys(sub._rawsubscriptions).length, 0);
     didunsubscribe = true;
     count = 0;
     setTimeout(function() {
       didsubscribe = true;
       sub.subscribe("");
-    }, 400)
+    }, 50)
   } else if (count == NO_MESSAGE && didsubscribe) {
-    process.exit();
+    sub.unsubscribe("");
   }
 });

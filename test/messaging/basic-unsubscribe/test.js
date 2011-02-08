@@ -14,9 +14,13 @@ var pub   = null
   , count = 0
   , pids = []
   , subs = 0
+  , totalsubs = 0
   , longestKey = 0
   , hasVariants = false  
-  , connections = 0;
+  , connections = 0
+  , seigerunning = false;
+
+timeout(10000);
 
 function getbytes(pid) {
   var buffer = new Buffer(pid + RANDOM_BYTES, "ascii");
@@ -37,59 +41,46 @@ function getlongestbufferlength() {
 }
 
 function startseige() {
-  var count = BCASTS_TO_RECV;
-  equal(subs, POOL_SIZE + 1, "Expected " + pids.length + " subscribe events");
-  equal(pub._broadcastEndpointFilterOptions.longestKey, longestKey);
-  equal(pub._hasPatternLengthVariants, hasVariants);
-
-  (function loop() {
-    pids.forEach(function(pid) {
-      pub.send(new Buffer(pid.toString(), "ascii"));
-    });
-    setTimeout(loop, 50);
-  })();
-
-  timeout(10000);
+  if (!seigerunning && pub.sockets.length == POOL_SIZE * 2 && 
+      subs == POOL_SIZE * 2) {
+    seigerunning = true;
+    (function loop() {
+      pids.forEach(function(pid) {
+        pub.send(pid);
+      });
+      setTimeout(loop, 50);
+    })();
+  }
 }
 
 function stopseige() {
-  equal(subs, 0, "Expected " + pids.length + " unsubscribe events");
-  equal(Object.keys(pub._subscriptions), 0, "Expected routing table to \
-                                             be empty");
-  equal(pub._hasPatternLengthVariants, -1);
-  equal(pub._broadcastEndpointFilterOptions.longestKey, 0);
-
+  // console.log(Object.keys(pub._rawsubscriptions).length)
+  equal(Object.keys(pub._rawsubscriptions).length, 0);
   shutdown();
 }
 
 pub = createChannel("pub");
-pub.bind("proc://test-channel");
+pub.listen("proc://test-channel");
 
-pub.on("subscribe", function(pattern) {
-  subs++;
-});
-
-pub.on("unsubscribe", function(pattern) {
-  subs--;
-});
-
-pub.on("endpointConnect", function() {
-  if (++connections == POOL_SIZE * 2) {
-    setTimeout(startseige, 100);
-  }
-});
-
-pub.on("endpointDisconnect", function() {
-  if (!(--connections)) {
-    process.nextTick(stopseige);    
-  }
+pub.on("connect", function(sock) {
+  sock.on("subscribe", function() {
+    totalsubs++;
+    subs++;
+    startseige();
+  });
+  sock.on("unsubscribe", function() {
+    subs--;
+    if (totalsubs >= POOL_SIZE * 4 && subs == 0) {
+      process.nextTick(stopseige);    
+    }
+  });
 });
 
 for (var i = 0; i < POOL_SIZE; i++) {
-  worker = spawn("./unsubscriber", BCASTS_TO_RECV);
+  worker = spawn("./unsubscriber", [BCASTS_TO_RECV]);
   pids.push(getbytes(worker.pid));
 }
 
 for (var i = 0; i < POOL_SIZE; i++) {
-  spawn("./nullunsubscriber", BCASTS_TO_RECV * POOL_SIZE);
+  spawn("./nullunsubscriber", [BCASTS_TO_RECV * POOL_SIZE]);
 }

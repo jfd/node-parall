@@ -13,29 +13,28 @@ var sub = null
 
 sub = createChannel("sub");
 sub.connect("proc://test-channel");
-sub.subscribe(pattern);
+sub.subscribe(pattern.toString("binary"));
 sub.on("message", function(msg) {
-  var graph = msg.toString("ascii");
+  var graph = msg.graph.toString("ascii");
 
   if (didunsubscribe && !didsubscribe) {
     throw new Error("Received message when in unsubscribe mode");
   }
 
   if (graph.substr(0, pattern.length) !== pattern.toString("ascii")) {
-    throw new Error("Received unexpected message " + 
-                    msg.toString("ascii", 0, pattern.length));
+    throw new Error("Received unexpected message " + graph);
   }
   
   if (++count == NO_MESSAGE && !didunsubscribe) {
-    sub.unsubscribe(pattern);
-    equal(Object.keys(sub._subscriptions).length, 0);
+    sub.unsubscribe(pattern.toString("binary"));
+    equal(Object.keys(sub._rawsubscriptions).length, 0);
     didunsubscribe = true;
     count = 0;
     setTimeout(function() {
       didsubscribe = true;
-      sub.subscribe(pattern);
-    }, 400)
+      sub.subscribe(pattern.toString("binary"));
+    }, 50)
   } else if (count == NO_MESSAGE && didsubscribe) {
-    process.exit();
+    sub.unsubscribe(pattern.toString("binary"));
   }
 });
