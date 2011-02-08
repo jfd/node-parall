@@ -17,6 +17,9 @@ var pub   = null
   , longestKey = 0
   , hasVariants = false
   , worker
+  , seigerunning;
+
+timeout(1000);
   
 function getbytes(pid) {
   var buffer = new Buffer(pid + RANDOM_BYTES, "ascii");
@@ -29,57 +32,54 @@ function getbytes(pid) {
 }
 
 function startseige() {
-  var count = BCASTS_TO_RECV;
-  equal(subs, POOL_SIZE + 1, "Expected " + pids.length + " subscribe events");
-  equal(pub._broadcastEndpointFilterOptions.longestKey, longestKey);
-  equal(pub._hasPatternLengthVariants, hasVariants);
-  while (count--) {
-    pids.forEach(function(pid) {
-      pub.send(new Buffer(pid.toString(), "ascii"));
+  if (!seigerunning && pub.sockets.length == POOL_SIZE * 2 && 
+      subs == POOL_SIZE * 2) {
+    seigerunning = true;
+    process.nextTick(function() {
+      var count = BCASTS_TO_RECV;
+      while (count--) {
+        pids.forEach(function(pid) {
+          pub.send(pid);
+        });
+      }
     });
   }
-  
-  timeout(10000);
 }
 
 function stopseige() {
   equal(subs, 0, "Expected " + pids.length + " unsubscribe events");
-  equal(Object.keys(pub._subscriptions), 0, "Expected routing table to \
+  equal(Object.keys(pub._rawsubscriptions), 0, "Expected routing table to \
                                              be empty");
-  equal(pub._hasPatternLengthVariants, -1);
-  equal(pub._broadcastEndpointFilterOptions.longestKey, 0);
-  
   shutdown();
 }
 
 pub = createChannel("pub");
-pub.bind("proc://test-channel");
+pub.listen("proc://test-channel");
 
-pub.on("subscribe", function(pattern) {
-  subs++;
+pub.on("connect", function(sock) {
+  sock.on("subscribe", function() {
+    subs++;
+    startseige();
+  });
+  sock.on("unsubscribe", function() {
+    subs--;
+    if (subs == 0) {
+      process.nextTick(stopseige);
+    }
+  });
 });
 
-pub.on("unsubscribe", function(pattern) {
-  subs--;
-});
-
-pub.on("endpointConnect", function() {
-  if (++connections == POOL_SIZE * 2) {
-    setTimeout(startseige, 100);
-  }
-});
-
-pub.on("endpointDisconnect", function() {
-  if (!(--connections)) {
+pub.on("disconnect", function(sock) {
+  if (this.sockets.length == 0) {
     process.nextTick(stopseige);    
   }
 });
 
 for (var i = 0; i < POOL_SIZE; i++) {
-  worker = spawn("./subscriber", BCASTS_TO_RECV);
+  worker = spawn("./subscriber", [BCASTS_TO_RECV]);
   pids.push(getbytes(worker.pid));
 }
 
 for (var i = 0; i < POOL_SIZE; i++) {
-  spawn("./nullsubscriber", BCASTS_TO_RECV * POOL_SIZE);
+  spawn("./nullsubscriber", [BCASTS_TO_RECV * POOL_SIZE]);
 }

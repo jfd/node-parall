@@ -11,19 +11,16 @@ var sub = null
 
 sub = createChannel("sub");
 sub.connect("proc://test-channel");
-sub.subscribe(pattern);
+sub.subscribe(pattern.toString());
 sub.on("message", function(msg) {
-  var graph = msg.toString("ascii");
+  var graph = msg.graph.toString("ascii");
 
   if (graph.substr(0, pattern.length) !== pattern.toString("ascii")) {
-    throw new Error("Received unexpected message " + 
-                    msg.toString("ascii", 0, pattern.length));
+    throw new Error("Received unexpected message `" + graph + "`");
   }
   
   if (++count == messages) {
-    setTimeout(function() {
-      process.exit();
-    }, 400)
+    sub.unsubscribe(pattern.toString());
   }
   
   if (count > messages) {
