@@ -2,7 +2,6 @@ const ok                = require("assert").ok
     , equal             = require("assert").equal
     , createChannel     = require("../../../lib").createChannel
     , spawn             = require("../../../lib").spawn
-    , send              = require("../../../lib").send
     , timeout           = require("../../common").timeout
     , shutdown          = require("../../common").shutdown
 
@@ -10,7 +9,6 @@ const POOL_SIZE         = 4,
       REQUESTS_TO_SEND  = 100
 
 var master  = null
-  , workers = []
   , connections  = 0
   , count = 0
   , tokens = []
@@ -18,36 +16,44 @@ var master  = null
 
 timeout(5000);
 
-master = createChannel("master");
-master.listen("proc://worker-pool");
+master = createChannel("req");
+
 master.on("connect", function() {
-  if (++connections == POOL_SIZE) {
-    setTimeout(function() {
-      var rejectRequestsToSend = POOL_SIZE / 2;
+  var rejectRequestsToSend = POOL_SIZE / 2;
 
-      while (rejectRequestsToSend--) {
-        master.send("set-reject", function(msg, resp, pid) {
-          rejectingPids.push(pid);
-        });
-      }
+  if (++connections != POOL_SIZE) {
+    return;
+  }
 
-      setTimeout(function() {
-        var reqcount = REQUESTS_TO_SEND;
-        while (reqcount--) {
-          master.send("ping", function(msg, resp, pid) {
-            equal(resp, "pong");
-            equal(rejectingPids.indexOf(pid), -1);
-            if (++count == REQUESTS_TO_SEND) {
-              workers.forEach(function(worker) {
-                worker.kill();
-              });
-            }
+  while (rejectRequestsToSend--) {
+    master.send("set-reject", 1, function(msg, resp, pid) {
+      rejectingPids.push(pid);
+    });
+  }
+
+  setTimeout(function() {
+    var reqcount = REQUESTS_TO_SEND;
+    while (reqcount--) {
+      master.send("ping", function(msg, resp, pid) {
+        equal(resp, "pong");
+        equal(rejectingPids.indexOf(pid), -1);
+        if (++count == REQUESTS_TO_SEND) {
+          master.sockets.forEach(function(worker) {
+            worker.kill();
           });
         }
-      }, 200);
+      });
+    }
 
-    }, 200);
-  }
+    setTimeout(function() {
+      master.sockets.forEach(function(sock) {
+        sock.send("set-reject", 0);
+      });
+      rejectingPids = [];
+    }, 100);
+    
+  }, 200);
+  
 });
 master.on("disconnect", function() {
   if (!(--connections)) {
@@ -57,5 +63,5 @@ master.on("disconnect", function() {
 });
 
 for (var i = 0; i < POOL_SIZE; i++) {
-  workers.push(spawn("./worker", "pipe"));
+  master.attach(spawn("./worker"));
 }

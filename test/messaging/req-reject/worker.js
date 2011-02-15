@@ -1,21 +1,22 @@
-const createChannel     = require("../../../lib").createChannel
+const receive     = require("../../../lib").receive
 
 var worker = null
   , rejectMode = false;
 
-worker = createChannel("worker");
-worker.connect("proc://worker-pool");
-worker.on("message", function(msg) {
-  if (msg.graph[0] == "set-reject") {
-    rejectMode = true;
-    msg.send("ok", process.pid);
-  } else if (msg.graph[0] == "ping") {
+
+receive (
+  
+  "set-reject", Number, function(value) {
+    rejectMode = value;
+    this.send("ok", process.pid);
+  },
+  
+  "ping", function() {
     if (rejectMode) {
-      msg.reject();
+      this.reject();
     } else {
-      msg.send("pong", process.pid);
+      this.send("pong", process.pid);
     }
-  } else {
-    throw new Error("Bad message");
   }
-});
+  
+);
