@@ -6,7 +6,7 @@ var messages = parseInt(process.argv[2])
   , sub = null;
 
 sub = createChannel("sub");
-sub.subscribe("");
+sub.subscribe(new Buffer(0));
 sub.connect("proc://pub-sub");
 sub.on("message", function(msg) {
 

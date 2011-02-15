@@ -11,7 +11,7 @@ var sub = null
 
 sub = createChannel("sub");
 sub.connect("proc://test-channel");
-sub.subscribe("");
+sub.subscribe(new Buffer(0));
 sub.on("message", function(msg) {
 
   if (didunsubscribe && !didsubscribe) {
@@ -19,15 +19,15 @@ sub.on("message", function(msg) {
   }
 
   if (++count == NO_MESSAGE && !didunsubscribe) {
-    sub.unsubscribe("");
+    sub.unsubscribe(new Buffer(0));
     equal(Object.keys(sub._rawsubscriptions).length, 0);
     didunsubscribe = true;
     count = 0;
     setTimeout(function() {
       didsubscribe = true;
-      sub.subscribe("");
+      sub.subscribe(new Buffer(0));
     }, 50)
   } else if (count == NO_MESSAGE && didsubscribe) {
-    sub.unsubscribe("");
+    sub.unsubscribe(new Buffer(0));
   }
 });

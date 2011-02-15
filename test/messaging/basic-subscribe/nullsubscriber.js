@@ -10,11 +10,11 @@ var sub = null
 
 sub = createChannel("sub");
 sub.connect("proc://test-channel");
-sub.subscribe("");
+sub.subscribe(new Buffer(0));
 sub.on("message", function(msg) {
 
   if (++count == messages) {
-    sub.unsubscribe("");
+    sub.unsubscribe(new Buffer(0));
   }
   
   if (count > messages) {

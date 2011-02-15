@@ -11,7 +11,7 @@ var sub = null
 
 sub = createChannel("sub");
 sub.connect("proc://test-channel");
-sub.subscribe(pattern.toString());
+sub.subscribe(pattern);
 sub.on("message", function(msg) {
   var graph = msg.graph.toString("ascii");
 
@@ -20,7 +20,7 @@ sub.on("message", function(msg) {
   }
   
   if (++count == messages) {
-    sub.unsubscribe(pattern.toString());
+    sub.unsubscribe(pattern);
   }
   
   if (count > messages) {

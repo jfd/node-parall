@@ -13,7 +13,7 @@ var sub = null
 
 sub = createChannel("sub");
 sub.connect("proc://test-channel");
-sub.subscribe(pattern.toString("binary"));
+sub.subscribe(pattern);
 sub.on("message", function(msg) {
   var graph = msg.graph.toString("ascii");
 
@@ -26,15 +26,15 @@ sub.on("message", function(msg) {
   }
   
   if (++count == NO_MESSAGE && !didunsubscribe) {
-    sub.unsubscribe(pattern.toString("binary"));
+    sub.unsubscribe(pattern);
     equal(Object.keys(sub._rawsubscriptions).length, 0);
     didunsubscribe = true;
     count = 0;
     setTimeout(function() {
       didsubscribe = true;
-      sub.subscribe(pattern.toString("binary"));
+      sub.subscribe(pattern);
     }, 50)
   } else if (count == NO_MESSAGE && didsubscribe) {
-    sub.unsubscribe(pattern.toString("binary"));
+    sub.unsubscribe(pattern);
   }
 });
