@@ -17,7 +17,7 @@ var master      = null
 
 timeout(5000);
 
-master = createChannel("master");
+master = createChannel("req");
 master.listen("proc://worker-pool");
 
 for (var i = 0; i < POOL_SIZE; i++) {

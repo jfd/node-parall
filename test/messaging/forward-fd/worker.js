@@ -9,7 +9,7 @@ const Socket            = require("net").Socket
 
 var worker = null
 
-worker = createChannel("worker");
+worker = createChannel("resp");
 worker.connect("proc://worker-pool");
 worker.on("message", function(msg) {
   var socket;
