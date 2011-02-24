@@ -48,7 +48,7 @@ subscriber.on("message", function(msg) {
 publisher = createChannel("pub");
 publisher.bind(PUB_URL);
 publisher.on("endpointConnect", function() {
-  var sendcount = NO_OF_MESSAGES;
+  var sendcount = NO_OF_MESSAGES; 
   function postloop() {
     var msg = new Buffer(PID + "" + sendcount, "ascii");
     if (sendcount--) {
@@ -83,7 +83,8 @@ worker.on("message", function(msg) {
   }
 });
 
+worker.connect("proc://pubsub-master");
+req.connect("proc://delegater");
+
 setTimeout(function() {
-  worker.connect("proc://pubsub-master");
-  req.connect("proc://delegater");
 }, 100);
