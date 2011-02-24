@@ -48,7 +48,7 @@ function tcpTest() {
     equal(state, 'OK');
     shutdown();
   });
-  spawn("./tcp_server");  
+  spawn("./tcp_server");
 }
 
 process.nextTick(procTest);
