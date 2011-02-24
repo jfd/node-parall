@@ -3,11 +3,8 @@ const equal               = require("assert").equal
     , throws              = require("assert").throws
     , Buffer              = require("buffer").Buffer
     , createChannel       = require("../../lib").createChannel
-    , replyTo             = require("../../lib").send
     , timeout             = require("../common").timeout
     , shutdown            = require("../common").shutdown
-
-const SUPPORTED_PROTOCOLS = require("../../lib/messaging").SUPPORTED_PROTOCOLS;
 
 const REQUESTS_TO_SEND    = 10,
       MESSAGE_SIZE        = 1024 * 100
@@ -17,8 +14,6 @@ var req  = null
   , pool  = null
   , reqrecv = 0
   , msg   = null
-  
-ok(SUPPORTED_PROTOCOLS.indexOf("mem:") != -1, "MemStream is not supported");
 
 function compare(a, b) {
   var l = a.length;
@@ -31,7 +26,7 @@ function compare(a, b) {
 function sendMessages(channel, outmsg, count) {
   while (count--) {
     channel.send(outmsg, function(inmsg) {
-      compare(outmsg, inmsg);
+      compare(outmsg, inmsg.graph);
       if (++reqrecv == REQUESTS_TO_SEND) {
         shutdown();
         process.exit();
@@ -54,9 +49,9 @@ function buildMessage(size) {
 timeout(2000);
 
 resp = createChannel("resp");
-resp.bind("mem://test");
+resp.listen("mem://test");
 resp.on("message", function(msg) {
-  msg.send(msg);
+  msg.send(msg.graph);
 });
 
 
