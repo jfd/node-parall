@@ -1,7 +1,4 @@
-const createSocket     = require("../../../lib").createSocket
+const createChannel     = require("../../../lib").createChannel
 
-worker = createSocket("resp");
-worker.connect("proc://worker-pool");
-worker.on("close", function() {
-  console.log("cloooooooooo")
-});
+var resp = createChannel("resp");
+resp.connect("proc://worker-pool");

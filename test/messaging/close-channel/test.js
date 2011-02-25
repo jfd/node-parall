@@ -18,22 +18,18 @@ timeout(5000);
 master = createChannel("req");
 master.listen("proc://worker-pool");
 master.on("connect", function() {
-  console.log("connect")
   if (++connections == POOL_SIZE) {
     master.close();
   }
 });
 master.on("closing", function() {
-  console.log("closing");
   closingFired = true;
 });
 master.on("close", function() {
-  console.log("closed")
   closeFired = true;
 });
 
 function onexit() {
-  console.log("exit")
   if (!(--connections)) {
     ok(closingFired);
     ok(closeFired);
