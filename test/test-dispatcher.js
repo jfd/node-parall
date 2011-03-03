@@ -44,3 +44,9 @@ assert.equal(cls.d1("undefined", "undefined"), "undefined");
 assert.equal(cls.d1("undefined", "asd", "asd", "asd"), "undefined");
 
 assert.equal(cls.d2("undefined"), -1);
+
+assert.equal(cls.d2("temp"), undefined);
+
+cls.d2 = null;
+
+assert.equal(cls.d2("temp"), -1);
