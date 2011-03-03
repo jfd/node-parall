@@ -60,3 +60,13 @@ assert.doesNotThrow(function() {
 });
 
 assert.equal(cls.d3("temp"), "2nd");
+
+cls.__addHandler__("d3", function ok() {
+  return "ok";
+});
+
+assert.equal(cls.d3("ok"), "ok");
+
+cls.__removeHandler__("d3", "ok/0");
+
+assert.equal(cls.d3("ok"), -1);
