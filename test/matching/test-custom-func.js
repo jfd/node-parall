@@ -2,7 +2,7 @@ const ok                = require("assert").ok
     , equal             = require("assert").equal
     , deepEqual         = require("assert").deepEqual
     , match             = require("../../lib").match
-    , when              = require("../../lib").when
+    , type              = require("../../lib").type
     , _                 = require("../../lib")._
     
 
@@ -13,6 +13,7 @@ var m = null
 
 function result(no) {
   return function(args, callback) {
+    console.log(typeof args);
     matchResult = args;
     matched = no;
     return args;
@@ -38,15 +39,8 @@ function OtherCustomMatcher(value, result) {
 }
     
 m = match(
-  
-  when ("test", CustomMatcher) (
-    result(1)
-  ),
-  
-  when ("test", OtherCustomMatcher) (
-    result(2)
-  )
-  
+  "test", type(CustomMatcher), result(1),
+  "test", type(OtherCustomMatcher), result(2)
 );
 
 ok(m("test", 1)) || equal(matched, 1) || deepEqual(matchResult, [1]);
