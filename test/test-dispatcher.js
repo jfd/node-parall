@@ -7,6 +7,7 @@ function Class() {}
 
 defineDispatcher(Class.prototype, "d1");
 defineDispatcher(Class.prototype, "d2");
+defineDispatcher(Class.prototype, "d3", { configurable: true });
 
 var cls = new Class();
 
@@ -30,18 +31,18 @@ cls.d1 = function(message) {
   return message;
 };
 
-cls.d2 = function temp() {};
-
-assert.throws(function() {
-  cls.d2 = function temp() {};
-});
-
 assert.equal(cls.d1("ok"), "ok");
 assert.equal(cls.d1("ok", "message"), "message");
 assert.equal(cls.d1("ok", "message", "message2"), "message2");
 assert.equal(cls.d1("undefined"), "undefined");
 assert.equal(cls.d1("undefined", "undefined"), "undefined");
 assert.equal(cls.d1("undefined", "asd", "asd", "asd"), "undefined");
+
+cls.d2 = function temp() {};
+
+assert.throws(function() {
+  cls.d2 = function temp() {};
+});
 
 assert.equal(cls.d2("undefined"), -1);
 
@@ -50,3 +51,12 @@ assert.equal(cls.d2("temp"), undefined);
 cls.d2 = null;
 
 assert.equal(cls.d2("temp"), -1);
+
+
+cls.d3 = function temp() { return "1st"};
+
+assert.doesNotThrow(function() {
+  cls.d3 = function temp() { return "2nd"}
+});
+
+assert.equal(cls.d3("temp"), "2nd");
