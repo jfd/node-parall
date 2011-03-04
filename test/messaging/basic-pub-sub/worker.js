@@ -8,11 +8,11 @@ var messages = parseInt(process.argv[2])
 sub = createChannel("sub");
 sub.subscribe(new Buffer(0));
 sub.connect("proc://pub-sub");
-sub.on("message", function(msg) {
 
-  equal(message, msg.graph.toString());
+sub.receive = function (msg, data) {
+  equal(message, data.toString());
 
   if (--messages == 0) {
     process.exit();
-  }
-});
+  }  
+};

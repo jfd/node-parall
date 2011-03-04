@@ -26,9 +26,10 @@ function bcast() {
 pub = createChannel("pub");
 pub.listen("proc://pub-sub");
 
-pub.on("connect", function() {
-  // We need a timeout here. Child needs time to send the SUBSCRIBE message
-  (++connections == POOL_SIZE) && setTimeout(bcast, 200);
+pub.on("connect", function(sock) {
+  sock.on("subscribe", function() {
+    (++connections == POOL_SIZE) && bcast();
+  });
 });
 
 pub.on("disconnect", function() {
