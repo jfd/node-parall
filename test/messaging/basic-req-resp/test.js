@@ -18,11 +18,11 @@ timeout(2000);
 resp = createChannel("resp");
 resp.listen("proc://req-resp");
 
-resp.on("message", function(msg) {
-  equal(msg.graph[0], "hello world");
+resp.receive = function exec(msg, text) {
+  equal(text, "hello world");
   count++;
-  msg.send("ok");
-});
+  msg.ok();
+};
 
 resp.on("disconnect", function() {
   if (++disconnects == POOL_SIZE) {

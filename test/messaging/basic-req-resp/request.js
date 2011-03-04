@@ -4,20 +4,26 @@ const ok                = require("assert").ok
     , createChannel     = require("../../../lib").createChannel
 
 var requests = parseInt(process.argv[2])
+  , ch = null
   , req = null
   , count = 0
   , sent = requests
 
 
-req = createChannel("req");
-req.connect("proc://req-resp");
+ch = createChannel("req");
+ch.connect("proc://req-resp");
 
 while (sent--) {
-  req.send("hello world", function(msg, state) {
-    equal(state, "ok");
-
+  req = ch.send("exec", "hello world");
+  
+  req.receive = function OK(msg) {
     if (++count == requests) {
       process.exit();
     }
-  });
+  };
+  
+  req.receive = function() {
+    console.log.apply(null, arguments);
+    throw new Error(["Unexpected message received "].join(arguments).toString());
+  };
 }
