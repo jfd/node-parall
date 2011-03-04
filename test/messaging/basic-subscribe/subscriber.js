@@ -12,8 +12,8 @@ var sub = null
 sub = createChannel("sub");
 sub.connect("proc://test-channel");
 sub.subscribe(pattern);
-sub.on("message", function(msg) {
-  var graph = msg.graph.toString("ascii");
+sub.receive = function(msg, data) {
+  var graph = data.toString("ascii");
 
   if (graph.substr(0, pattern.length) !== pattern.toString("ascii")) {
     throw new Error("Received unexpected message `" + graph + "`");
@@ -26,4 +26,4 @@ sub.on("message", function(msg) {
   if (count > messages) {
     throw new Error("Received more messages that expected.");
   }
-});
+};

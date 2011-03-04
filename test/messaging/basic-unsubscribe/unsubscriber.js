@@ -14,8 +14,8 @@ var sub = null
 sub = createChannel("sub");
 sub.connect("proc://test-channel");
 sub.subscribe(pattern);
-sub.on("message", function(msg) {
-  var graph = msg.graph.toString("ascii");
+sub.receive = function(msg, data) {
+  var graph = data.toString("ascii");
 
   if (didunsubscribe && !didsubscribe) {
     throw new Error("Received message when in unsubscribe mode");
@@ -37,4 +37,4 @@ sub.on("message", function(msg) {
   } else if (count == NO_MESSAGE && didsubscribe) {
     sub.unsubscribe(pattern);
   }
-});
+};

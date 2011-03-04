@@ -11,8 +11,7 @@ var sub = null
 sub = createChannel("sub");
 sub.connect("proc://test-channel");
 sub.subscribe(new Buffer(0));
-sub.on("message", function(msg) {
-
+sub.receive = function(msg, data) {
   if (++count == messages) {
     sub.unsubscribe(new Buffer(0));
   }
@@ -20,4 +19,5 @@ sub.on("message", function(msg) {
   if (count > messages) {
     throw new Error("Received more messages that expected.");
   }
-});
+  
+};
