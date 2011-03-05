@@ -16,7 +16,7 @@ ch.connect("proc://req-resp");
 while (sent--) {
   req = ch.send("exec", "hello world");
   
-  req.receive = function OK(msg) {
+  req.receive = function ok(msg) {
     if (++count == requests) {
       process.exit();
     }
