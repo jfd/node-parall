@@ -1,14 +1,10 @@
-const equal             = require("assert").equal
-    , createChannel     = require("../../../lib").createChannel
-    , send              = require("../../../lib").send
-    , decode            = require("../../../lib").decode
+const createChannel     = require("../../../lib").createChannel
 
-var resp = null;
+var resp;
 
 resp = createChannel("resp");
 resp.listen("proc://server");
-resp.on("message", function(msg) {
-  equal(msg.graph[0], "test");
+resp.receive = function test(msg) {
   process.nextTick(function() { process.exit() });
   msg.ok();
-});
+};

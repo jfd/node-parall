@@ -12,42 +12,51 @@ const TCP_PORT          = require("../../common").TCP_PORT
 timeout(5000);
 
 function procTest() {
+  var ch = null;
   var req = null;
   var pool = null;
   
-  req = createChannel("req");
-  req.connect("proc://server");
-  req.send("test", function(msg, state) {
-    equal(state, 'OK');
+  ch = createChannel("req");
+  ch.connect("proc://server");
+
+  req = ch.send("test");
+  req.receive = function ok(msg) {
     process.nextTick(sockTest);
-  });
+  };
+  
   spawn("./proc_server");  
 }
 
 
 function sockTest() {
+  var ch = null;
   var req = null;
   var pool = null;
 
-  req = createChannel("req");
-  req.connect("sock://server");
-  req.send("test", function(msg, state) {
-    equal(state, 'OK');
+  ch = createChannel("req");
+  ch.connect("sock://server");
+
+  req = ch.send("test");
+  req.receive = function ok(msg) {
     process.nextTick(tcpTest);
-  });
+  };
+
   spawn("./sock_server");  
 }
 
 function tcpTest() {
+  var ch = null;
   var req = null;
   var pool = null;
 
-  req = createChannel("req");
-  req.connect(geturi("tcp", TCP_HOST, TCP_PORT));
-  req.send("test", function(msg, state) {
-    equal(state, 'OK');
+  ch = createChannel("req");
+  ch.connect(geturi("tcp", TCP_HOST, TCP_PORT));
+  
+  req = ch.send("test");
+  req.receive = function ok(msg) {
     shutdown();
-  });
+  };
+  
   spawn("./tcp_server");
 }
 
