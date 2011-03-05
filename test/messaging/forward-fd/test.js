@@ -24,11 +24,15 @@ for (var i = 0; i < POOL_SIZE; i++) {
   spawn("./worker");
 }
 
-server = createServer(function(socket) {
-  master.send("hook-fd", socket, function(msg, status) {
-    equal(status, 'OK');
-    socket.destroy();
-  })
+server = createServer(function(sock) {
+  var req;
+  
+  req = master.send("hook", sock);
+  
+  req.receive = function ok(msg) {
+    sock.destroy();
+  };
+  
 });
 server.listen(TCP_PORT, TCP_HOST);
 
