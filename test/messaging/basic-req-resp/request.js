@@ -23,7 +23,6 @@ while (sent--) {
   };
   
   req.receive = function() {
-    console.log.apply(null, arguments);
-    throw new Error(["Unexpected message received "].join(arguments).toString());
+    throw new Error("Unexpected message received ");
   };
 }
