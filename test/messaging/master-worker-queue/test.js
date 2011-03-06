@@ -21,13 +21,15 @@ master.on("connect", function() {
   if (++connections == POOL_SIZE) {
     var reqcount = REQUESTS_TO_SEND;
     while (reqcount--) {
-      master.send("do", function(msg, ok, token) {
-        equal(ok, 'OK');
+      var req = master.send("test");
+      req.receive = function ok(msg, token) {
+
         if (tokens.indexOf(token) !== -1) {
           throw new Error("Token already received");
         }
+
         tokens.push(token);
-        // console.log("count: %s, of: %s" , count, REQUESTS_TO_SEND);
+
         if (++count == REQUESTS_TO_SEND) {
           equal(master._readySockets.length, POOL_SIZE);
           for (var i = 0; i < POOL_SIZE; i++) {
@@ -40,7 +42,7 @@ master.on("connect", function() {
           }
           master.sockets.forEach(function(sock) { sock.kill() });
         }
-      });
+      };
     }
   }
 });
@@ -50,5 +52,5 @@ master.on("disconnect", function() {
 });
 
 for (var i = 0; i < POOL_SIZE; i++) {
-  master.attach(spawn("./worker"));
+  master.attach(spawn("./worker", "pipe"));
 }

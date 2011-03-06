@@ -1,14 +1,9 @@
 const equal             = require("assert").equal
-    , createChannel     = require("../../../lib").createChannel
-    , send              = require("../../../lib/").send
-    , decode            = require("../../../lib/").decode
-    , receive           = require("../../../lib/").receive
+    , openStdMsg        = require("../../../lib/util").openStdMsg
 
 var worker = null
   , count = 0;
   
-receive (
-  'do', function() {
-    this.send('OK', process.pid.toString() + (count++));
-  }
-);
+openStdMsg().receive = function test(msg) {
+  msg.send("ok", process.pid.toString() + (count++));
+};
