@@ -24,10 +24,11 @@ function compare(a, b) {
 
 function sendMessages(channel, outmsg, count) {
   while (count--) {
-    channel.send(outmsg, function(inmsg) {
+    var req = channel.send(outmsg);
+    req.receive = function(msg, data) {
       reqcount++;
-      compare(outmsg, inmsg.graph);
-    });
+      compare(outmsg, data);
+    };
   }
 }
 
@@ -53,4 +54,4 @@ req.on("disconnect", function() {
 
 sendMessages(req, buildMessage(MESSAGE_SIZE), REQUESTS_TO_SEND);
 
-spawn("./resp", [REQUESTS_TO_SEND], "pipe");
+spawn("./resp", [REQUESTS_TO_SEND]);

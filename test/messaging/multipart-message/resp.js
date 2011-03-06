@@ -10,13 +10,13 @@ var requests = parseInt(process.argv[2])
 resp = createChannel("resp");
 
 resp.listen("proc://test");
-resp.on("message", function(msg) {
+resp.receive = function(msg, data) {
 
-  msg.send(msg.graph);
+  msg.send(data);
 
   if (++count == requests) {
     setTimeout(function() {
       process.exit();
     }, 200);
   }  
-});
+};
