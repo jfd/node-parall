@@ -33,14 +33,12 @@ for (var i = 0; i < POOL_SIZE; i++) {
 }
 
 for (var i = 0; i < REQUESTS_TO_SEND; i++) {
-  // console.log("send %s", i)
-  master.send(graph, function(msg) {
-    // console.log("received response %s/%s", count, REQUESTS_TO_SEND)
-    // console.log("msg length: %s", msg.graph.constructor);
+  var req = master.send(graph)
+  req.receive = function(msg, data) {
     if (++count == REQUESTS_TO_SEND) {
       workers.forEach(function(worker) {
         worker.kill();
       });
     }
-  });
+  };
 }
