@@ -23,6 +23,14 @@ cls.d1 = function ok(messageA, messageB) {
   return messageB;
 };
 
+cls.d1 = function fallback(a, b) {
+  return b;
+};
+
+cls.d1 = function fallback() {
+  return arguments[0];
+};
+
 cls.d1 = function() {
   return "undefined";
 };
@@ -37,6 +45,8 @@ assert.equal(cls.d1("ok", "message", "message2"), "message2");
 assert.equal(cls.d1("undefined"), "undefined");
 assert.equal(cls.d1("undefined", "undefined"), "undefined");
 assert.equal(cls.d1("undefined", "asd", "asd", "asd"), "undefined");
+assert.equal(cls.d1("fallback", "test"), "test");
+assert.equal(cls.d1("fallback", "test", "test"), "test");
 
 cls.d2 = function temp() {};
 
