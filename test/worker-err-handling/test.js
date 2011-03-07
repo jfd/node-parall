@@ -1,9 +1,9 @@
 const ok                = require("assert").ok
     , equal             = require("assert").equal
     , notEqual          = require("assert").notEqual
-    , spawn             = require("../../../lib").spawn
-    , timeout           = require("../../common").timeout
-    , shutdown          = require("../../common").shutdown
+    , spawn             = require("../../lib").spawn
+    , timeout           = require("../common").timeout
+    , shutdown          = require("../common").shutdown
 
 var master  = null
   , timer   = null
@@ -24,7 +24,7 @@ function testErrAfterTimeout() {
     shutdown(new Error("Worker leaked exception."));
   }
   
-  spawn("./worker", "noerror", "after-timeout").on("exit", function(code) {
+  spawn("./worker", "noerror", ["after-timeout"]).on("exit", function(code) {
     process.nextTick(testErrOnStartup);
   }); 
 }
@@ -49,7 +49,7 @@ function testErrOnStartup2() {
     shutdown(new Error("Worker pool leaked exception."));
   }
 
-  spawn("./worker", "at-startup").on("error", function(err) {
+  spawn("./worker", ["at-startup"]).on("error", function(err) {
     notEqual(err, undefined);
     process.nextTick(testErrReference);
   });  
@@ -62,7 +62,7 @@ function testErrReference() {
     process.nextTick(testErrAndRestart);
   }
 
-  spawn("./worker", "reference");
+  spawn("./worker", ["reference"]);
 }
 
 function testErrAndRestart() {
@@ -73,7 +73,7 @@ function testErrAndRestart() {
     shutdown(new Error("Worker pool leaked exception."))
   }
   
-  worker = spawn("./worker", "keepalive", "subworker-startup");
+  worker = spawn("./worker", "keepalive", ["subworker-startup"]);
   worker.on("restart", function() {
     if (!didrestart) {
       didrestart = true;
@@ -91,7 +91,7 @@ function testSubErrAfterTimeout() {
     shutdown(new Error("Worker leaked exception."));
   }
   
-  spawn("./worker", "noerror", "subworker-timeout").on("exit", function(code) {
+  spawn("./worker", "noerror", ["subworker-timeout"]).on("exit", function(code) {
     process.nextTick(testSubErrOnStartup);
   }); 
 }
@@ -103,7 +103,7 @@ function testSubErrOnStartup() {
     process.nextTick(testSubErrOnStartup2);
   }
 
-  spawn("./worker", "subworker-startup");
+  spawn("./worker", ["subworker-startup"]);
 }
 
 function testSubErrOnStartup2() {
@@ -114,7 +114,7 @@ function testSubErrOnStartup2() {
     shutdown(new Error("Worker pool leaked exception."));
   }
 
-  spawn("./worker", "subworker-startup").on("error", function(err) {
+  spawn("./worker", ["subworker-startup"]).on("error", function(err) {
     notEqual(err, undefined);
     process.nextTick(testSubErrReference);
   });  
@@ -127,7 +127,7 @@ function testSubErrReference() {
     process.nextTick(testSubErrAndRestart);
   }
 
-  spawn("./worker", "subworker-ref");
+  spawn("./worker", ["subworker-ref"]);
 }
 
 function testSubErrAndRestart() {
@@ -138,7 +138,7 @@ function testSubErrAndRestart() {
     shutdown(new Error("Worker pool leaked exception."))
   }
   
-  worker = spawn("./worker", "keepalive", "subworker-startup");
+  worker = spawn("./worker", "keepalive", ["subworker-startup"]);
   worker.on("restart", function() {
     if (!didrestart) {
       didrestart = true;

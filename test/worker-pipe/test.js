@@ -1,9 +1,9 @@
 const Buffer            = require("buffer").Buffer
     , equal             = require("assert").equal
-    , spawn             = require("../../../lib").spawn
-    , createChannel     = require("../../../lib").createChannel
-    , timeout           = require("../../common").timeout
-    , shutdown          = require("../../common").shutdown
+    , spawn             = require("../../lib").spawn
+    , createChannel     = require("../../lib").createChannel
+    , timeout           = require("../common").timeout
+    , shutdown          = require("../common").shutdown
 
 var testleader  = null
   , instructions = null
@@ -15,7 +15,7 @@ timeout(5000);
 instructions = createChannel("req");
 instructions.connect("proc://instructions");
 
-testleader = spawn("./worker", "test-leader");
+testleader = spawn("./worker", ["test-leader"]);
 testleader.on("exit", function(code, signal) {
   equal(code, null);
   equal(signal, 'SIGHUP');
@@ -27,15 +27,13 @@ testleader.stdout.on("data", function(data) {
 }); 
 
 tests.unshift({ phase: "test1", callback:function() {
-  instructions.send(new Buffer("test1", "ascii"), function(msg) {
-    equal(msg.toString(), 'OK');
-  });  
+  var req = instructions.send("test1");
+  req.receive = function ok(msg) {};  
 }});
 
 tests.unshift({ phase: "test2", callback:function() {
-  instructions.send(new Buffer("test2", "ascii"), function(msg) {
-    equal(msg.toString(), 'OK');
-  });  
+  var req = instructions.send("test2");
+  req.receive = function ok(msg) {};  
 }});
 
 function startnext() {

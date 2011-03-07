@@ -1,7 +1,7 @@
 const join            = require("path").join
     , stat            = require("fs").stat
     , writeFile       = require("fs").writeFile
-    , spawn           = require("parall").spawn
+    , spawn           = require("../../lib").spawn
 
 switch (process.argv[2]) {
 
