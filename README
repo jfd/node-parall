@@ -1,3 +1,10 @@
 Node-Parall
 ===========
-Node.js parallelism made easy.
+Node.js parallelism made easier.
+
+
+Run tests with:
+
+    make test-all
+    
+    
