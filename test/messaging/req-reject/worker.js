@@ -1,22 +1,18 @@
-const receive     = require("../../../lib").receive
+const openStdMsg     = require("../../../lib/util").openStdMsg
 
 var worker = null
   , rejectMode = false;
 
 
-receive (
-  
-  "set-reject", Number, function(value) {
-    rejectMode = value;
-    this.send("ok", process.pid);
-  },
-  
-  "ping", function() {
-    if (rejectMode) {
-      this.reject();
-    } else {
-      this.send("pong", process.pid);
-    }
+openStdMsg().receive = function setReject(msg, value) {
+  rejectMode = value;
+  msg.send("ok", process.pid);
+};
+
+openStdMsg().receive = function ping(msg) {
+  if (rejectMode) {
+    msg.reject();
+  } else {
+    msg.send("pong", process.pid);
   }
-  
-);
+};

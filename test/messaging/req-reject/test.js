@@ -26,28 +26,30 @@ master.on("connect", function() {
   }
 
   while (rejectRequestsToSend--) {
-    master.send("set-reject", 1, function(msg, resp, pid) {
+    var req = master.send("setReject", 1);
+    req.receive = function ok(msg, pid) {
       rejectingPids.push(pid);
-    });
+    };
   }
 
   setTimeout(function() {
     var reqcount = REQUESTS_TO_SEND;
     while (reqcount--) {
-      master.send("ping", function(msg, resp, pid) {
-        equal(resp, "pong");
+      var req = master.send("ping");
+      req.receive = function pong(msg, pid) {
         equal(rejectingPids.indexOf(pid), -1);
         if (++count == REQUESTS_TO_SEND) {
           master.sockets.forEach(function(worker) {
             worker.kill();
           });
         }
-      });
+      };
     }
 
     setTimeout(function() {
       master.sockets.forEach(function(sock) {
-        sock.send("set-reject", 0);
+        var req = sock.send("setReject", 0);
+        req.receive = function() {};
       });
       rejectingPids = [];
     }, 100);
@@ -63,5 +65,5 @@ master.on("disconnect", function() {
 });
 
 for (var i = 0; i < POOL_SIZE; i++) {
-  master.attach(spawn("./worker"));
+  master.attach(spawn("./worker", "pipe"));
 }
