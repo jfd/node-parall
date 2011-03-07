@@ -15,10 +15,9 @@ resp.listen("mem://test");
 resp.on("error", function(err) {
   console.log(err);
 });
-resp.on("message", function(msg) {
-  equal(msg.graph[0], "ping");
+resp.receive = function ping(msg) {
   msg.send("pong");
-});
+};
 
 req = createChannel("req");
 req.connect("mem://test");
@@ -26,7 +25,7 @@ req.on("error", function(err) {
   console.log(err);
 });
 
-req.send("ping", function(msg) {
-  equal(msg.graph[0], "pong");
+var r = req.send("ping");
+r.receive = function pong(msg) {
   shutdown();
-});
+};

@@ -24,14 +24,17 @@ function compare(a, b) {
 }
 
 function sendMessages(channel, outmsg, count) {
+  var req;
+  
   while (count--) {
-    channel.send(outmsg, function(inmsg) {
-      compare(outmsg, inmsg.graph);
+    req = channel.send(outmsg);
+    req.receive = function(msg, data) {
+      compare(outmsg, msg.graph);
       if (++reqrecv == REQUESTS_TO_SEND) {
         shutdown();
         process.exit();
       }      
-    });
+    };
   }
 }
 
@@ -50,10 +53,9 @@ timeout(2000);
 
 resp = createChannel("resp");
 resp.listen("mem://test");
-resp.on("message", function(msg) {
-  msg.send(msg.graph);
-});
-
+resp.receive = function(msg, data) {
+  msg.send(data);
+};
 
 req = createChannel("req");
 req.connect("mem://test");
