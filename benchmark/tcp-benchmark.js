@@ -5,7 +5,7 @@ const MESSAGE_SIZE   = 1024 * 50;
 if (process.argv[2] == "subscriber") {
   var time;
   var count = 0;
-  var ch = require("net").createConnection("/tmp/b");
+  var ch = require("net").createConnection(7000);
   ch.on("data", function(data) {
     if (count == 0) {
       time = Date.now();
@@ -24,7 +24,16 @@ if (process.argv[2] == "subscriber") {
 } else {
   var buffer = new Buffer(MESSAGE_SIZE);
   var ch = require("net").createServer(function(sock) {
-    
+    // var c = 0;
+    // 
+    // function send() {
+    //   sock.write(buffer);
+    //   if (++c < NO_OF_MESSAGES) {
+    //     process.nextTick(send);
+    //   }
+    // }
+    // 
+    // setTimeout(send, 100);
     setTimeout(function() {
       for (var i = 0; i < NO_OF_MESSAGES; i++) {
         sock.write(buffer);
@@ -37,6 +46,6 @@ if (process.argv[2] == "subscriber") {
       process.exit();
     });
   });
-  ch.listen("/tmp/b");
+  ch.listen(7000);
   var worker = require("../lib").spawn(__filename, ["subscriber"], "pipe");
 }

@@ -1,11 +1,11 @@
 const NO_OF_MESSAGES = 10000;
-const MESSAGE_SIZE   = 1024;
+const MESSAGE_SIZE   = 1024 * 50;
 
 
 if (process.argv[2] == "subscriber") {
   var count = 0;
   var ch = require("../lib").createChannel("resp");
-  ch.listen("proc://benchmark");
+  ch.listen("tcp://127.0.0.1:7000");
   ch.receive = function(msg, data) {
     msg.ok();
   };
@@ -14,7 +14,7 @@ if (process.argv[2] == "subscriber") {
   var buffer = new Buffer(MESSAGE_SIZE);
   var worker = require("../lib").spawn(__filename, ["subscriber"], "pipe");
   var ch = require("../lib").createChannel("req");
-  ch.connect("proc://benchmark");
+  ch.connect("tcp://127.0.0.1:7000");
   ch.on("connect", function() {
     time = Date.now();
     var count = 0;

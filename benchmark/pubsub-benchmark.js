@@ -1,7 +1,9 @@
 const NO_OF_MESSAGES = 10000;
 const MESSAGE_SIZE   = 1024 * 50;
 
-
+process.on("uncaughtException", function(err) {
+  console.log(err.stack);
+});
 if (process.argv[2] == "subscriber") {
   var count = 0;
   var ch = require("../lib").createChannel("sub");
@@ -19,10 +21,18 @@ if (process.argv[2] == "subscriber") {
   var ch = require("../lib").createChannel("pub");
   ch.listen("tcp://127.0.0.1:7000");
   ch.on("subscribe", function() {
+    var c = 0;
     time = Date.now();
-    for (var i = 0; i < NO_OF_MESSAGES; i++) {
-      this.send(buffer);
+    function send() {
+      ch.send(buffer);
+      if (++c < NO_OF_MESSAGES) {
+        process.nextTick(send);
+      }
     }
+    send();
+    // for (var i = 0; i < NO_OF_MESSAGES; i++) {
+    //   this.send(buffer);
+    // }
   });
   ch.on("disconnect", function() {
     var elapsed = Date.now() - time;
