@@ -1,17 +1,17 @@
 
 ## Workers
 
+Parall workers is the answer to "Actors", which is common in many other languages. The worker is based on the `child_process` module found in Node.js, but with one difference, workers can only be spawned from Javascript modules.
 
+New Workers is created via the `spawn` function.
 
+## spawn(module, [args], options...)
 
-
-## spawn(module, ...)
-
-Creates a new `Worker` and starts it with provided arguments.
+Creates a new `Worker` and starts it with provided arguments and options.
 
 The `spawn` function scans all given arguments for "option arguments".
 
-This options are:
+Available options are:
 
 - `'join'`. Joins the process, which means that the parent process
   exit's when new child process exit's. The parent process exits with 
@@ -26,8 +26,8 @@ Example:
 
     const spawn = require("parall").spawn;
     
-    // Spawn a new worker in "silent"-mode.
-    spawn("./worker", "silent");
+    // Spawn a new worker in "pipe"-mode.
+    spawn("./worker", "pipe");
 
 
 ## Worker
