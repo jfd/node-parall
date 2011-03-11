@@ -20,7 +20,7 @@ function procTest() {
   ch.connect("proc://server");
 
   req = ch.send("test");
-  req.receive = function ok(msg) {
+  req.recv = function ok(msg) {
     process.nextTick(sockTest);
   };
   
@@ -37,7 +37,7 @@ function sockTest() {
   ch.connect("sock://server");
 
   req = ch.send("test");
-  req.receive = function ok(msg) {
+  req.recv = function ok(msg) {
     process.nextTick(tcpTest);
   };
 
@@ -53,7 +53,7 @@ function tcpTest() {
   ch.connect(geturi("tcp", TCP_HOST, TCP_PORT));
   
   req = ch.send("test");
-  req.receive = function ok(msg) {
+  req.recv = function ok(msg) {
     shutdown();
   };
   

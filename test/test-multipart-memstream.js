@@ -28,7 +28,7 @@ function sendMessages(channel, outmsg, count) {
   
   while (count--) {
     req = channel.send(outmsg);
-    req.receive = function(msg, data) {
+    req.recv = function(msg, data) {
       compare(outmsg, msg.graph);
       if (++reqrecv == REQUESTS_TO_SEND) {
         shutdown();
@@ -53,7 +53,7 @@ timeout(2000);
 
 resp = createChannel("resp");
 resp.listen("mem://test");
-resp.receive = function(msg, data) {
+resp.recv = function(msg, data) {
   msg.send(data);
 };
 

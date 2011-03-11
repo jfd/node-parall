@@ -6,7 +6,7 @@ var worker = null
 
 worker = createChannel("resp");
 worker.connect("proc://worker-pool");
-worker.receive = function hook(msg, fd) {
+worker.recv = function hook(msg, fd) {
   var sock;
   
   ok(typeof fd == "number");

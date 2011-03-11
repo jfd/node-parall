@@ -14,7 +14,7 @@ resp.listen("mem://test");
 resp.on("error", function(err) {
   console.log(err);
 });
-resp.receive = function ping(msg) {
+resp.recv = function ping(msg) {
   msg.send("pong");
 };
 
@@ -25,6 +25,6 @@ req.on("error", function(err) {
 });
 
 var r = req.send("ping");
-r.receive = function pong(msg) {
+r.recv = function pong(msg) {
   shutdown();
 };

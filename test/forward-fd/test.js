@@ -29,7 +29,7 @@ server = createServer(function(sock) {
   
   req = master.send("hook", sock);
   
-  req.receive = function ok(msg) {
+  req.recv = function ok(msg) {
     sock.destroy();
   };
   

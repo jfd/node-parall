@@ -6,7 +6,7 @@ if (process.argv[2] == "subscriber") {
   var count = 0;
   var ch = require("../lib").createChannel("resp");
   ch.listen("tcp://127.0.0.1:7000");
-  ch.receive = function(msg, data) {
+  ch.recv = function(msg, data) {
     msg.ok();
   };
 } else {
@@ -20,7 +20,7 @@ if (process.argv[2] == "subscriber") {
     var count = 0;
     for (var i = 0; i < NO_OF_MESSAGES; i++) {
       var req = this.send(buffer);
-      req.receive = function ok() {
+      req.recv = function ok() {
         count++;
         
         if (count == NO_OF_MESSAGES) {

@@ -34,7 +34,7 @@ for (var i = 0; i < POOL_SIZE; i++) {
 
 for (var i = 0; i < REQUESTS_TO_SEND; i++) {
   var req = master.send(graph)
-  req.receive = function(msg, data) {
+  req.recv = function(msg, data) {
     if (++count == REQUESTS_TO_SEND) {
       workers.forEach(function(worker) {
         worker.kill();

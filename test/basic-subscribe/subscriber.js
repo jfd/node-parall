@@ -12,7 +12,7 @@ var sub = null
 sub = createChannel("sub");
 sub.connect("proc://test-channel");
 sub.subscribe(pattern);
-sub.receive = function(msg, data) {
+sub.recv = function(msg, data) {
   var graph = data.toString("ascii");
 
   if (graph.substr(0, pattern.length) !== pattern.toString("ascii")) {

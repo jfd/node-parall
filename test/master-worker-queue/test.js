@@ -22,7 +22,7 @@ master.on("connect", function() {
     var reqcount = REQUESTS_TO_SEND;
     while (reqcount--) {
       var req = master.send("test");
-      req.receive = function ok(msg, token) {
+      req.recv = function ok(msg, token) {
 
         if (tokens.indexOf(token) !== -1) {
           throw new Error("Token already received");

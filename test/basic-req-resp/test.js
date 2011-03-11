@@ -18,7 +18,7 @@ timeout(2000);
 resp = createChannel("resp");
 resp.listen("proc://req-resp");
 
-resp.receive = function exec(msg, text) {
+resp.recv = function exec(msg, text) {
   equal(text, "hello world");
   count++;
   msg.ok();

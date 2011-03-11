@@ -13,14 +13,14 @@ switch (process.argv[2]) {
     instructions = createChannel("resp");
     instructions.listen("proc://instructions");
 
-    instructions.receive = function test1(msg) {
+    instructions.recv = function test1(msg) {
       process.nextTick(function() {
         print("test1");
       });
       msg.ok();
     };
     
-    instructions.receive = function test2(msg) {
+    instructions.recv = function test2(msg) {
       testsubject = spawn("./worker", "pipe", ["test-subject"]);
       testsubject.on("exit", function(code, signal) {
         equal(code, 0);

@@ -25,7 +25,7 @@ function compare(a, b) {
 function sendMessages(channel, outmsg, count) {
   while (count--) {
     var req = channel.send(outmsg);
-    req.receive = function(msg, data) {
+    req.recv = function(msg, data) {
       reqcount++;
       compare(outmsg, data);
     };

@@ -10,7 +10,7 @@ var requests = parseInt(process.argv[2])
 resp = createChannel("resp");
 
 resp.listen("proc://test");
-resp.receive = function(msg, data) {
+resp.recv = function(msg, data) {
 
   msg.send(data);
 

@@ -12,7 +12,7 @@ var sub = null
 sub = createChannel("sub");
 sub.connect("proc://test-channel");
 sub.subscribe(new Buffer(0));
-sub.receive = function(msg, data) {
+sub.recv = function(msg, data) {
 
   if (didunsubscribe && !didsubscribe) {
     throw new Error("Received message when in unsubscribe mode");

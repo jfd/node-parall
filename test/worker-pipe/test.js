@@ -28,12 +28,12 @@ testleader.stdout.on("data", function(data) {
 
 tests.unshift({ phase: "test1", callback:function() {
   var req = instructions.send("test1");
-  req.receive = function ok(msg) {};  
+  req.recv = function ok(msg) {};  
 }});
 
 tests.unshift({ phase: "test2", callback:function() {
   var req = instructions.send("test2");
-  req.receive = function ok(msg) {};  
+  req.recv = function ok(msg) {};  
 }});
 
 function startnext() {

@@ -27,7 +27,7 @@ master.on("connect", function() {
 
   while (rejectRequestsToSend--) {
     var req = master.send("setReject", 1);
-    req.receive = function ok(msg, pid) {
+    req.recv = function ok(msg, pid) {
       rejectingPids.push(pid);
     };
   }
@@ -36,7 +36,7 @@ master.on("connect", function() {
     var reqcount = REQUESTS_TO_SEND;
     while (reqcount--) {
       var req = master.send("ping");
-      req.receive = function pong(msg, pid) {
+      req.recv = function pong(msg, pid) {
         equal(rejectingPids.indexOf(pid), -1);
         if (++count == REQUESTS_TO_SEND) {
           master.sockets.forEach(function(worker) {
@@ -49,7 +49,7 @@ master.on("connect", function() {
     setTimeout(function() {
       master.sockets.forEach(function(sock) {
         var req = sock.send("setReject", 0);
-        req.receive = function() {};
+        req.recv = function() {};
       });
       rejectingPids = [];
     }, 100);

@@ -11,7 +11,7 @@ var worker = null
 
 worker = createChannel("resp");
 worker.connect("proc://worker-pool");
-worker.receive = function(msg, data) {
+worker.recv = function(msg, data) {
   equal(data.length, MESSAGE_SIZE);
   msg.send(response);
 };

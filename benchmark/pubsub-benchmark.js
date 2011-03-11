@@ -9,7 +9,7 @@ if (process.argv[2] == "subscriber") {
   var ch = require("../lib").createChannel("sub");
   ch.subscribe(new Buffer(0));
   ch.connect("tcp://127.0.0.1:7000");
-  ch.receive = function(msg, data) {
+  ch.recv = function(msg, data) {
     if (++count == NO_OF_MESSAGES) {
       ch.close();
     }

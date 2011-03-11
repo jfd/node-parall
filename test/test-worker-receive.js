@@ -8,18 +8,18 @@ timeout(5000);
 
 if (process.argv[2] == "worker") {
   
-  stdmsg.receive = function test(msg) {
+  stdmsg.recv = function test(msg) {
     msg.ok();
   };
   
-  stdmsg.receive = function shutdown(msg) {
+  stdmsg.recv = function shutdown(msg) {
     process.exit();
   };
   
 } else {
   var worker = spawn(__filename, ["worker"], "pipe");  
-  worker.send("test").receive = function ok(msg) {
-    worker.send("shutdown").receive = function() {};
+  worker.send("test").recv = function ok(msg) {
+    worker.send("shutdown").recv = function() {};
   };
   worker.on("exit", function() {
     shutdown();

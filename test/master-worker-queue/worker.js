@@ -4,6 +4,6 @@ const equal             = require("assert").equal
 var worker = null
   , count = 0;
   
-openStdMsg().receive = function test(msg) {
+openStdMsg().recv = function test(msg) {
   msg.send("ok", process.pid.toString() + (count++));
 };

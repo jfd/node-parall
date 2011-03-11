@@ -16,13 +16,13 @@ ch.connect("proc://req-resp");
 while (sent--) {
   req = ch.send("exec", "hello world");
   
-  req.receive = function ok(msg) {
+  req.recv = function ok(msg) {
     if (++count == requests) {
       process.exit();
     }
   };
   
-  req.receive = function() {
+  req.recv = function() {
     throw new Error("Unexpected message received ");
   };
 }

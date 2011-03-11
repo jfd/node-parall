@@ -9,7 +9,7 @@ sub = createChannel("sub");
 sub.subscribe(new Buffer(0));
 sub.connect("proc://pub-sub");
 
-sub.receive = function (msg, data) {
+sub.recv = function (msg, data) {
   equal(message, data.toString());
 
   if (--messages == 0) {
