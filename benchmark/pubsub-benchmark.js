@@ -1,5 +1,5 @@
-const NO_OF_MESSAGES = 10000;
-const MESSAGE_SIZE   = 1024 * 50;
+const NO_OF_MESSAGES = 100000;
+const MESSAGE_SIZE   = 1024;
 
 process.on("uncaughtException", function(err) {
   console.log(err.stack);
