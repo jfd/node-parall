@@ -29,29 +29,29 @@
 var slice = Array.prototype.slice;
 
 // Messaging functions
-exports.createChannel = require("./channel").createChannel;
-exports.createSocket = require("./socket").createSocket;
+exports.createChannel = require("./lib/channel").createChannel;
+exports.createSocket = require("./lib/socket").createSocket;
 
 // Worker functions
-exports.spawn         = require("./worker").spawn;
+exports.spawn         = require("./lib/worker").spawn;
 
 Object.defineProperty(exports, 'isWorker', {
   get: function() {
-    return require("./worker").isWorker;
+    return require("./lib/worker").isWorker;
   }
 });
 
 Object.defineProperty(exports, 'stdmsg', {
   get: function() {
-    return require("./util").openStdMsg();
+    return require("./lib/util").openStdMsg();
   }
 });
 
 Object.defineProperty(exports, 'getProcessUrl', {
   get: function() {
-    return require("./util").getProcessUrl;
+    return require("./lib/util").getProcessUrl;
   }
 });
 
 // Utils functions
-exports.geturi        = require("./util").geturi;
+exports.geturi        = require("./lib/util").geturi;
