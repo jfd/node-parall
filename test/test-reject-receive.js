@@ -1,6 +1,6 @@
 const equal             = require("assert").equal
-    , createChannel     = require("../lib").createChannel
-    , spawn             = require("../lib").spawn
+    , createChannel     = require("../index").createChannel
+    , spawn             = require("../index").spawn
     , openStdMsg        = require("../lib/util").openStdMsg
     , timeout           = require("./common").timeout
     , shutdown          = require("./common").shutdown

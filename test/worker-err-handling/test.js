@@ -1,7 +1,7 @@
 const ok                = require("assert").ok
     , equal             = require("assert").equal
     , notEqual          = require("assert").notEqual
-    , spawn             = require("../../lib").spawn
+    , spawn             = require("../../index").spawn
     , timeout           = require("../common").timeout
     , shutdown          = require("../common").shutdown
 

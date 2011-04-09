@@ -2,7 +2,7 @@ const equal               = require("assert").equal
     , ok                  = require("assert").ok
     , throws              = require("assert").throws
     , Buffer              = require("buffer").Buffer
-    , createChannel       = require("../lib").createChannel
+    , createChannel       = require("../index").createChannel
     , timeout             = require("./common").timeout
     , shutdown            = require("./common").shutdown
 

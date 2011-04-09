@@ -1,7 +1,7 @@
 const ok                = require("assert").ok
     , equal             = require("assert").equal
-    , createChannel     = require("../../lib").createChannel
-    , spawn             = require("../../lib").spawn
+    , createChannel     = require("../../index").createChannel
+    , spawn             = require("../../index").spawn
     , timeout           = require("../common").timeout
     , shutdown          = require("../common").shutdown
 

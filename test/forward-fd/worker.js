@@ -1,6 +1,6 @@
 const Socket            = require("net").Socket
     , ok                = require("assert").ok
-    , createChannel     = require("../../lib").createChannel
+    , createChannel     = require("../../index").createChannel
 
 var worker = null
 

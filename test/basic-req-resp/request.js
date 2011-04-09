@@ -1,7 +1,7 @@
 const ok                = require("assert").ok
     , equal             = require("assert").equal
     , throws            = require("assert").throws
-    , createChannel     = require("../../lib").createChannel
+    , createChannel     = require("../../index").createChannel
 
 var requests = parseInt(process.argv[2])
   , ch = null

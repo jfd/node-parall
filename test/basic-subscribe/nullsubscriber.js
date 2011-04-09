@@ -1,7 +1,7 @@
 const Buffer            = require("buffer").Buffer
     , ok                = require("assert").ok
     , throws            = require("assert").throws
-    , createChannel     = require("../../lib").createChannel
+    , createChannel     = require("../../index").createChannel
 
 var sub = null
   , messages = parseInt(process.argv[2])

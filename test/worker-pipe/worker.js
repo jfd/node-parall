@@ -1,7 +1,7 @@
 const Buffer            = require("buffer").Buffer
     , print             = require("util").print
-    , spawn             = require("../../lib").spawn
-    , createChannel     = require("../../lib").createChannel
+    , spawn             = require("../../index").spawn
+    , createChannel     = require("../../index").createChannel
     , equal             = require("assert").equal
 
 var testsubject

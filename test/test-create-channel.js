@@ -1,6 +1,6 @@
 const ok                = require("assert").ok
     , throws            = require("assert").throws
-    , createChannel     = require("../lib/").createChannel
+    , createChannel     = require("../index").createChannel
     , RespChannel       = require("../lib/resp").RespChannel
     , ReqChannel        = require("../lib/req").ReqChannel
     , SubChannel        = require("../lib/sub").SubChannel

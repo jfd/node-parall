@@ -1,5 +1,5 @@
 const equal             = require("assert").equal
-    , createChannel     = require("../../lib").createChannel
+    , createChannel     = require("../../index").createChannel
 
 var messages = parseInt(process.argv[2])
   , message = process.argv[3]

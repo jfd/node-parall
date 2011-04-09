@@ -1,6 +1,6 @@
 const equal             = require("assert").equal
-const createChannel     = require("../../lib").createChannel
-    , send              = require("../../lib/").send
+const createChannel     = require("../../index").createChannel
+    , send              = require("../../index").send
     , createPayload     = require("../common").createPayload
 
 const MESSAGE_SIZE      = parseInt(process.argv[2]);

@@ -1,6 +1,6 @@
 const Buffer            = require("buffer").Buffer
     , equal             = require("assert").equal
-    , createChannel     = require("../../lib").createChannel
+    , createChannel     = require("../../index").createChannel
 
 const NO_MESSAGE        = 2
 

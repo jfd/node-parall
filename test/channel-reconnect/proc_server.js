@@ -1,4 +1,4 @@
-const createChannel     = require("../../lib").createChannel
+const createChannel     = require("../../index").createChannel
 
 var resp;
 

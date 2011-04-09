@@ -1,6 +1,6 @@
 const ok                = require("assert").ok
-    , createChannel     = require("../../lib").createChannel
-    , send              = require("../../lib").send
+    , createChannel     = require("../../index").createChannel
+    , send              = require("../../index").send
 
 var requests = parseInt(process.argv[2])
   , resp = null

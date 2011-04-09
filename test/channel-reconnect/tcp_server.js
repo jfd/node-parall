@@ -1,5 +1,5 @@
-const createChannel     = require("../../lib").createChannel
-    , geturi            = require("../../lib").geturi
+const createChannel     = require("../../index").createChannel
+    , geturi            = require("../../index").geturi
 
 const TCP_PORT          = require("../common").TCP_PORT
     , TCP_HOST          = require("../common").TCP_HOST

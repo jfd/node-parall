@@ -1,6 +1,6 @@
 const equal             = require("assert").equal
-    , spawn             = require("../lib").spawn
-    , stdmsg            = require("../lib").stdmsg
+    , spawn             = require("../index").spawn
+    , stdmsg            = require("../index").stdmsg
     , timeout           = require("./common").timeout
     , shutdown          = require("./common").shutdown
 

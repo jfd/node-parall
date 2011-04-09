@@ -1,8 +1,8 @@
 const ok                = require("assert").ok
     , equal             = require("assert").equal
-    , createChannel     = require("../../lib").createChannel
-    , spawn             = require("../../lib").spawn
-    , send              = require("../../lib").send
+    , createChannel     = require("../../index").createChannel
+    , spawn             = require("../../index").spawn
+    , send              = require("../../index").send
     , timeout           = require("../common").timeout
     , shutdown          = require("../common").shutdown
 

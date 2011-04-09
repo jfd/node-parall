@@ -6,7 +6,7 @@ process.on("uncaughtException", function(err) {
 });
 if (process.argv[2] == "subscriber") {
   var count = 0;
-  var ch = require("../lib").createChannel("sub");
+  var ch = require("../index").createChannel("sub");
   ch.subscribe(new Buffer(0));
   ch.connect("tcp://127.0.0.1:7000");
   ch.recv = function(msg, data) {
@@ -17,8 +17,8 @@ if (process.argv[2] == "subscriber") {
 } else {
   var time;
   var buffer = new Buffer(MESSAGE_SIZE);
-  var worker = require("../lib").spawn(__filename, ["subscriber"], "pipe");
-  var ch = require("../lib").createChannel("pub");
+  var worker = require("../index").spawn(__filename, ["subscriber"], "pipe");
+  var ch = require("../index").createChannel("pub");
   ch.listen("tcp://127.0.0.1:7000");
   ch.on("subscribe", function() {
     var c = 0;

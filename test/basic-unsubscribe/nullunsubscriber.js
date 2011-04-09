@@ -1,5 +1,5 @@
 const equal             = require("assert").equal
-    , createChannel     = require("../../lib").createChannel
+    , createChannel     = require("../../index").createChannel
 
 const NO_MESSAGE        = 4
 

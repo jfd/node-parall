@@ -1,7 +1,7 @@
 const join            = require("path").join
     , stat            = require("fs").stat
     , writeFile       = require("fs").writeFile
-    , spawn           = require("../../lib").spawn
+    , spawn           = require("../../index").spawn
 
 switch (process.argv[2]) {
 

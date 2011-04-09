@@ -1,8 +1,8 @@
 const equal             = require("assert").equal
     , throws            = require("assert").throws
     , Buffer            = require("buffer").Buffer
-    , createChannel     = require("../../lib").createChannel
-    , spawn             = require("../../lib").spawn
+    , createChannel     = require("../../index").createChannel
+    , spawn             = require("../../index").spawn
     , timeout           = require("../common").timeout
     , shutdown          = require("../common").shutdown
 
