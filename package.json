@@ -6,6 +6,9 @@
 	"homepage": "https://github.com/jfd/node-parall",
 	"author": "Johan Dahlberg <dahlberg.johan@gmail.com> (http://jfd.github.com/)",
   "main": ["./parall.js"],
+  "dependencies" : {
+    "fibers": ">=0.2.4"
+  },
 	"directories": {
 	  "lib": "./lib"
 	},
