@@ -1,0 +1,69 @@
+#!/bin/bash
+
+NODE=$(which node)
+if [[ -z "$NODE" ]]; then
+	echo "Could not find node in PATH!" 1>&2
+	exit 1
+fi
+
+usage() {
+  echo "Usage: parall [script.js] [--version] [--usage|help] \n"
+  echo "Available commands are:"
+  echo "    run           Run Hermes main process"
+  echo "    shutdown      Shutdown hermes process"
+  echo "    status        Shows current status"
+  echo "    config        Creates a new server config file"
+  echo "    repl          Starts a repl where processes can be controlled"
+  echo "    validate      Validates a Behavior setup file"
+  echo "    rebuild       Rebuild's the behavior vm for specified domain(s)"
+  echo "See 'hermes help COMMAND for command information"
+}
+
+PARALL_ROOT=$(dirname $(echo "console.log(require.resolve('parall'));" | $NODE | head -n1 | sed 's/> //'))/lib
+if [[ ! -e "$PARALL_ROOT/core.js" ]]; then
+	echo "Could not find Parall!" 1>&2
+	exit 1
+fi
+
+
+# if test $1 = "--version"; then
+#   version
+#   exit 1
+# fi
+# 
+# if test $1 = "--usage"; then
+#   usage
+#   exit 1
+# fi
+# 
+# if test $1 = "--help"; then
+#   usage
+#   exit 1
+# fi
+
+
+# in npm
+# node 4.x has a bug causing a broken pipe error here
+FIBERS_ROOT=$(dirname $(echo "console.log(require.resolve('fibers'));" | $NODE | head -n1 | sed 's/> //'))/src
+if [[ ! -e "$FIBERS_ROOT/fibers.node" ]]; then
+	echo "Could not find the coroutine shim!" 1>&2
+	exit 1
+fi
+
+UNAME=$(uname)
+if [[ "$UNAME" == "Linux" ]]; then
+  PARALL_RUNNER_TARGET=$1 \
+	FIBER_SHIM=1 \
+	LD_PRELOAD="$FIBERS_ROOT/coroutine.so" \
+  $NODE "$PARALL_ROOT/core.js" "$@"
+elif [[ "$UNAME" == "Darwin" ]]; then
+  PARALL_RUNNER_TARGET=$1 \
+	FIBER_SHIM=1 \
+	DYLD_INSERT_LIBRARIES="$FIBERS_ROOT/coroutine.dylib" \
+	DYLD_FORCE_FLAT_NAMESPACE=1 \
+	DYLD_LIBRARY_PATH="$FIBERS_ROOT" \
+  $NODE --prof --log-snapshot-positions --logfile=v8.log "$PARALL_ROOT/core.js" "$@"
+else
+	echo "This OS is not supported."
+	exit 1
+fi
