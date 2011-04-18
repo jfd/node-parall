@@ -62,7 +62,7 @@ elif [[ "$UNAME" == "Darwin" ]]; then
 	DYLD_INSERT_LIBRARIES="$FIBERS_ROOT/coroutine.dylib" \
 	DYLD_FORCE_FLAT_NAMESPACE=1 \
 	DYLD_LIBRARY_PATH="$FIBERS_ROOT" \
-  $NODE --prof --log-snapshot-positions --logfile=v8.log "$PARALL_ROOT/core.js" "$@"
+  $NODE "$PARALL_ROOT/core.js" "$@"
 else
 	echo "This OS is not supported."
 	exit 1

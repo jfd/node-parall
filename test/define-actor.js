@@ -8,65 +8,75 @@
 
 // bind("me");
 
-
-var job2 = spawn(function() {
-  var runme = true;
-  while (runme) {
-    receive(
-      function ping(a, b, c) {
-        switch (a) {
-          case "ping":
-            send(b, ["pong", c + 1]);
-            break;
-          case "exit":
-            runme = false;
-            break;
-        }
-      }
-    );
-  }
-});
-
-var job1 = spawn(function() {
-  var me = self();
-  var runme = true;
-  send(job2, ["ping", me, 1]);
-  while (runme) {
-    receive(
-      function ping(a, b, c) {
-        switch (a) {
-          case "pong":
-            if (b == 3) {
-              console.time("sendtest");
-            } else if (b == 100000) {
-              console.timeEnd("sendtest");
-              send(job2, ["exit"]);
-              runme = false;
-              return;
-            }
-            send(job2, ["ping", me, b]);
-            break;
-        }
-      }
-    );
-  }
-});
-
-
-
 // 
-// 
-// function spawnWorker() {
-//   spawn(function() {
-//     send(myworker, ["ping", self()]);
-//     receive (
-//       function pong(r) {
-//         // console.log("Received '%s' from %s", r, myworker);
+// var job2 = spawn(function() {
+//   var runme = true;
+//   while (runme) {
+//     receive(
+//       function ping(a, b, c) {
+//         switch (a) {
+//           case "ping":
+//             send(b, ["pong", c + 1]);
+//             break;
+//           case "exit":
+//             runme = false;
+//             break;
+//         }
 //       }
 //     );
-//   });
-// }
+//   }
+// });
 // 
+// var job1 = spawn(function() {
+//   var me = self();
+//   var runme = true;
+//   send(job2, ["ping", me, 1]);
+//   while (runme) {
+//     receive(
+//       function ping(a, b, c) {
+//         switch (a) {
+//           case "pong":
+//             if (b == 3) {
+//               console.time("sendtest");
+//             } else if (b == 100000) {
+//               console.timeEnd("sendtest");
+//               send(job2, ["exit"]);
+//               runme = false;
+//               return;
+//             }
+//             send(job2, ["ping", me, b]);
+//             break;
+//         }
+//       }
+//     );
+//   }
+// });
+// 
+// 
+
+
+
+console.time("spawn")
+var refs = [];
+for (var i = 0; i < 1000; i++) {
+  refs.push(spawn(function() {
+    // send(null, ["ping", self()]);
+    receive (
+      function pong(r) {
+        // console.log("Received '%s' from %s", r, myworker);
+      }
+    );
+  }));
+}
+console.timeEnd("spawn");
+
+setTimeout(function() {
+  console.time("send");
+  refs.forEach(function(ref) {
+    send(ref, ["pong"]);
+  });
+  console.timeEnd("send");
+},4000);
 // var c = 0;
 // console.log("Here!");
 // function dostuff() {
@@ -83,4 +93,3 @@ var job1 = spawn(function() {
 // }
 // 
 // setTimeout(dostuff, 10);
-// 
