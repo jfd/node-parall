@@ -1,6 +1,6 @@
 {
 	"name": "parall",
-	"version": "0.5.0",
+	"version": "0.5.1",
 	"description": "Node.js parallelism made easier.",
 	"keywords": ["networking", "messaging", "actors", "multicore"],
 	"homepage": "https://github.com/jfd/node-parall",
