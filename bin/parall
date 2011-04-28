@@ -7,16 +7,8 @@ if [[ -z "$NODE" ]]; then
 fi
 
 usage() {
-  echo "Usage: parall [script.js] [--version] [--usage|help] \n"
-  echo "Available commands are:"
-  echo "    run           Run Hermes main process"
-  echo "    shutdown      Shutdown hermes process"
-  echo "    status        Shows current status"
-  echo "    config        Creates a new server config file"
-  echo "    repl          Starts a repl where processes can be controlled"
-  echo "    validate      Validates a Behavior setup file"
-  echo "    rebuild       Rebuild's the behavior vm for specified domain(s)"
-  echo "See 'hermes help COMMAND for command information"
+  echo "Usage: parall [script.js] [OPTIONS] [--usage|help] \n"
+  echo "See 'parall --help' for help"
 }
 
 PARALL_ROOT=$(dirname $(echo "console.log(require.resolve('parall'));" | $NODE | head -n1 | sed 's/> //'))/lib
