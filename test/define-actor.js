@@ -74,22 +74,32 @@ for (;;) {
 //     );
 //   }
 // });
+// 
+// 
 
 
 
-// 
-// 
-// function spawnWorker() {
-//   spawn(function() {
-//     send(myworker, ["ping", self()]);
-//     receive (
-//       function pong(r) {
-//         // console.log("Received '%s' from %s", r, myworker);
-//       }
-//     );
-//   });
-// }
-// 
+console.time("spawn")
+var refs = [];
+for (var i = 0; i < 1000; i++) {
+  refs.push(spawn(function() {
+    // send(null, ["ping", self()]);
+    receive (
+      function pong(r) {
+        // console.log("Received '%s' from %s", r, myworker);
+      }
+    );
+  }));
+}
+console.timeEnd("spawn");
+
+setTimeout(function() {
+  console.time("send");
+  refs.forEach(function(ref) {
+    send(ref, ["pong"]);
+  });
+  console.timeEnd("send");
+},4000);
 // var c = 0;
 // console.log("Here!");
 // function dostuff() {
@@ -106,4 +116,3 @@ for (;;) {
 // }
 // 
 // setTimeout(dostuff, 10);
-// 
