@@ -1,17 +1,18 @@
 
 
-var bind    = require("../../index").bind;
 
-bind("test");
 
-for (;;) {
-  receive(
-    function ping(a, sender) {
-      send(sender, ["pong"]);
-    },
+receive(
+  function ping(a, sender) {
+    console.log("received pong");
+    // send(sender, ["pong"]);
+  },
 
-    function shutdown() {
-      process.exit();
-    }
-  );
-}
+  function shutdown() {
+    process.exit();
+  }
+);
+
+// 
+// for (;;) {
+// }

@@ -8,49 +8,72 @@
 
 // bind("me");
 
+var sendAfter   = require("../index").sendAfter;
 
-var job2 = spawn(function() {
-  var runme = true;
-  while (runme) {
-    receive(
-      function ping(a, b, c) {
-        switch (a) {
-          case "ping":
-            send(b, ["pong", c + 1]);
-            break;
-          case "exit":
-            runme = false;
-            break;
-        }
-      }
-    );
-  }
-});
 
-var job1 = spawn(function() {
-  var me = self();
-  var runme = true;
-  send(job2, ["ping", me, 1]);
-  while (runme) {
-    receive(
-      function ping(a, b, c) {
-        switch (a) {
-          case "pong":
-            if (b == 3) {
-              console.time("sendtest");
-            } else if (b == 100000) {
-              console.timeEnd("sendtest");
-              send(job2, ["exit"]);
-              runme = false;
-              return;
-            }
-            send(job2, ["ping", me, b]);
-            break;
-        }
-      }
-    );
-  }
-});
+ref = spawn("./tmp/test2");
+
+sendAfter(self(), ["exitWorker"], 1000);
+
+for (;;) {
+  console.log("receive");
+  receive(
+    function exitWorker() {
+      exit("goodbye", ref);
+      sendAfter(self(), ["shutdown"], 1000);
+    },
+    function shutdown() {
+      exit("shutdown");
+    }
+  );
+}
+
+
+
+
+// 
+// var job2 = spawn(function() {
+//   var runme = true;
+//   while (runme) {
+//     receive(
+//       function ping(a, b, c) {
+//         switch (a) {
+//           case "ping":
+//             send(b, ["pong", c + 1]);
+//             break;
+//           case "exit":
+//             runme = false;
+//             break;
+//         }
+//       }
+//     );
+//   }
+// });
+// 
+// var job1 = spawn(function() {
+//   var me = self();
+//   var runme = true;
+//   send(job2, ["ping", me, 1]);
+//   while (runme) {
+//     receive(
+//       function ping(a, b, c) {
+//         switch (a) {
+//           case "pong":
+//             if (b == 3) {
+//               console.time("sendtest");
+//             } else if (b == 100000) {
+//               console.timeEnd("sendtest");
+//               send(job2, ["exit"]);
+//               runme = false;
+//               return;
+//             }
+//             send(job2, ["ping", me, b]);
+//             break;
+//         }
+//       }
+//     );
+//   }
+// });
 
 
 

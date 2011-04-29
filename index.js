@@ -30,6 +30,19 @@ exports.receive = require("./lib/messaging").receive;
 exports.bind    = require("./lib/messaging").bind;
 exports.send    = require("./lib/messaging").send;
 
+
+exports.sendAfter = require("./lib/timers").sendAfter;
+
+//
+//  ### function sendAfter(dest, msg, delay) 
+//
+//
+exports.sendAfter = function sendAfter(dest, msg, delay) {
+  console.log("sendAfter");
+  
+  return require("./lib/core").startTimer(delay, dest, msg);
+};
+
 // Object.defineProperty(exports, 'spawn', {
 //   get: function() {
 //     return require("./lib/core").spawn;
