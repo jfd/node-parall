@@ -11,8 +11,8 @@ usage() {
   echo "See 'parall --help' for help"
 }
 
-PARALL_ROOT=$(dirname $(echo "console.log(require.resolve('parall'));" | $NODE | head -n1 | sed 's/> //'))/lib
-if [[ ! -e "$PARALL_ROOT/core.js" ]]; then
+PARALL_ROOT=$(dirname $(echo "console.log(require.resolve('parall'));" | $NODE | head -n1 | sed 's/> //'))
+if [[ ! -e "$PARALL_ROOT/kernel.js" ]]; then
 	echo "Could not find Parall!" 1>&2
 	exit 1
 fi
@@ -47,14 +47,14 @@ if [[ "$UNAME" == "Linux" ]]; then
   PARALL_RUNNER_TARGET=$1 \
 	FIBER_SHIM=1 \
 	LD_PRELOAD="$FIBERS_ROOT/coroutine.so" \
-  $NODE "$PARALL_ROOT/core.js" "$@"
+  $NODE "$PARALL_ROOT/kernel.js" "$@"
 elif [[ "$UNAME" == "Darwin" ]]; then
   PARALL_RUNNER_TARGET=$1 \
 	FIBER_SHIM=1 \
 	DYLD_INSERT_LIBRARIES="$FIBERS_ROOT/coroutine.dylib" \
 	DYLD_FORCE_FLAT_NAMESPACE=1 \
 	DYLD_LIBRARY_PATH="$FIBERS_ROOT" \
-  $NODE "$PARALL_ROOT/core.js" "$@"
+  $NODE "$PARALL_ROOT/kernel.js" "$@"
 else
 	echo "This OS is not supported."
 	exit 1

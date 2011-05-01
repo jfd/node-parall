@@ -8,19 +8,20 @@
 
 // bind("me");
 
-var sendAfter   = require("../index").sendAfter;
+var sendAfter   = require("../lib").sendAfter;
 
 
 ref = spawn("./tmp/test2");
 
+link(ref);
+
 sendAfter(self(), ["exitWorker"], 1000);
 
 for (;;) {
-  console.log("receive");
   receive(
     function exitWorker() {
       exit("goodbye", ref);
-      sendAfter(self(), ["shutdown"], 1000);
+      // sendAfter(self(), ["shutdown"], 1000);
     },
     function shutdown() {
       exit("shutdown");
