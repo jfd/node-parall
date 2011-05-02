@@ -10,21 +10,31 @@
 
 var sendAfter   = require("../lib").sendAfter;
 
-
 ref = spawn("./tmp/test2");
 
 link(ref);
 
-sendAfter(self(), ["exitWorker"], 1000);
+sendAfter(self(), ["pattern2"], 1000);
+sendAfter(self(), ["exitWorker"], 1001);
 
 for (;;) {
   receive(
+
+    function pattern()      { this(15); },
+    function pattern(a)     { this(a, 2); },
+    function pattern(a, b)  { console.log("%s, %s", a, b); },
+
     function exitWorker() {
       exit("goodbye", ref);
       // sendAfter(self(), ["shutdown"], 1000);
     },
+
     function shutdown() {
       exit("shutdown");
+    },
+
+    function (name) {
+      console.log("no match for %s", name);
     }
   );
 }
