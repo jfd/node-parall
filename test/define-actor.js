@@ -12,6 +12,16 @@ var sendAfter   = require("../lib").sendAfter;
 
 ref = spawn("./tmp/test2");
 
+register("test2", ref);
+
+// register("myserver", ref);
+//
+// send("myserver", ["ok", 123]);
+//
+// unregister("myserver");
+
+console.log(node());
+
 link(ref);
 
 sendAfter(self(), ["pattern2"], 1000);
@@ -25,7 +35,8 @@ for (;;) {
     function pattern(a, b)  { console.log("%s, %s", a, b); },
 
     function exitWorker() {
-      exit("goodbye", ref);
+      console.log("exit");
+      exit("goodbye", "test2");
       // sendAfter(self(), ["shutdown"], 1000);
     },
 
@@ -42,7 +53,7 @@ for (;;) {
 
 
 
-// 
+//
 // var job2 = spawn(function() {
 //   var runme = true;
 //   while (runme) {
@@ -60,7 +71,7 @@ for (;;) {
 //     );
 //   }
 // });
-// 
+//
 // var job1 = spawn(function() {
 //   var me = self();
 //   var runme = true;
@@ -85,8 +96,8 @@ for (;;) {
 //     );
 //   }
 // });
-// 
-// 
+//
+//
 
 
 
@@ -125,5 +136,5 @@ setTimeout(function() {
 //   }
 //   // console.timeEnd("workerstartup")
 // }
-// 
+//
 // setTimeout(dostuff, 10);

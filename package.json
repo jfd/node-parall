@@ -1,11 +1,11 @@
 {
 	"name": "parall",
-	"version": "0.6.0",
+	"version": "0.6.1",
 	"description": "Node.js parallelism made easier.",
 	"keywords": ["networking", "messaging", "actors", "multicore"],
 	"homepage": "https://github.com/jfd/node-parall",
 	"author": "Johan Dahlberg <dahlberg.johan@gmail.com> (http://jfd.github.com/)",
-  "main": ["./parall.js"],
+  "main": "lib/index.js",
   "dependencies" : {
     "fibers": ">=0.2.4"
   },
