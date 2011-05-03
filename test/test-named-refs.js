@@ -15,5 +15,5 @@ assert.deepEqual(registered(), ["worker"]);
 assert.ok(register("worker", ref));
 sendAfter("worker", ["shutdown", self()], 1);
 receive();
+assert.equal(unregister("worker"), true);
 assert.equal(whereis("worker"), null);
-assert.equal(unregister("worker"), false);
