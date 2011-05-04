@@ -26,18 +26,6 @@ nodule-flags.
     $ exit("quiting");
 
 
-### isnodule()
-
-Returns `true` if in a `Nodule` context else `false`.
-
-#### Usage
-
-    /* Spawn current module if not called via `spawn`.
-    if (isnodule() === false) {
-      spawn(__filename);
-    }
-
-
 ### link(nodule)
 
 Links calling `Nodule` with `"nodule"` Nodule. Returns `true` if link
