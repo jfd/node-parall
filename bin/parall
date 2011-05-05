@@ -47,14 +47,14 @@ if [[ "$UNAME" == "Linux" ]]; then
   PARALL_RUNNER_TARGET=$1 \
 	FIBER_SHIM=1 \
 	LD_PRELOAD="$FIBERS_ROOT/coroutine.so" \
-  $NODE "$PARALL_ROOT/kernel.js" "$@"
+  exec $NODE "$PARALL_ROOT/kernel.js" "$@"
 elif [[ "$UNAME" == "Darwin" ]]; then
   PARALL_RUNNER_TARGET=$1 \
 	FIBER_SHIM=1 \
 	DYLD_INSERT_LIBRARIES="$FIBERS_ROOT/coroutine.dylib" \
 	DYLD_FORCE_FLAT_NAMESPACE=1 \
 	DYLD_LIBRARY_PATH="$FIBERS_ROOT" \
-  $NODE "$PARALL_ROOT/kernel.js" "$@"
+  exec $NODE "$PARALL_ROOT/kernel.js" "$@"
 else
 	echo "This OS is not supported."
 	exit 1

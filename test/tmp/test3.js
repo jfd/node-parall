@@ -1,7 +1,7 @@
 
 
 
-exports.start = function() {
+function main() {
   receive(
     function ping(a, sender) {
       console.log("received pong");
@@ -15,7 +15,4 @@ exports.start = function() {
 }
 
 
-
-// 
-// for (;;) {
-// }
+// spawn(main);
